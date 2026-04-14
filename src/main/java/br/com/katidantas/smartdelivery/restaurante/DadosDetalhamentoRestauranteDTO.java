@@ -2,13 +2,13 @@ package br.com.katidantas.smartdelivery.restaurante;
 
 import br.com.katidantas.smartdelivery.endereco.DadosEndereco;
 
-public record DadosDetalhamentoRestaurante(
+public record DadosDetalhamentoRestauranteDTO(
         Long id,
         String nome,
         String telefone,
         DadosEndereco endereco
 ) {
-    public DadosDetalhamentoRestaurante(Restaurante restaurante) {
+    public DadosDetalhamentoRestauranteDTO(Restaurante restaurante) {
         this(
                 restaurante.getId(),
                 restaurante.getNome(),

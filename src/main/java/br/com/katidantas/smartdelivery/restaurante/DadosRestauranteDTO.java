@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-public record DadosRestaurante(
+public record DadosRestauranteDTO(
         @NotBlank
         String nome,
         @NotBlank
@@ -20,7 +20,7 @@ public record DadosRestaurante(
         restaurante.setAtivo(true);
         restaurante.setNome(this.nome);
         restaurante.setTelefone(this.telefone);
-        restaurante.setEndereco(endereco.toEntity());
+        restaurante.setEndereco(this.endereco.toEntity());
         return restaurante;
     }
 }
