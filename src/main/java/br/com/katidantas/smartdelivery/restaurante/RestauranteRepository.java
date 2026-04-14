@@ -1,5 +1,7 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -7,7 +9,8 @@ import java.util.Optional;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
 
+    Page<Restaurante> findAllByAtivoTrue(Pageable paginacao);
 
-    Optional<Restaurante> findByIdAndIsAtivoEquals(Long id, Boolean estado);
+    Optional<Restaurante> findByIdAndAtivoEquals(Long id, Boolean estado);
 
 }

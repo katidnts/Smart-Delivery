@@ -2,35 +2,38 @@ package br.com.katidantas.smartdelivery.restaurante;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
+@AllArgsConstructor
 @Service
 public class RestauranteService {
 
-    @Autowired
-    private RestauranteRepository repository;
+    private final RestauranteRepository repository;
 
     @Transactional
     public Restaurante save(Restaurante restaurante) {
         return repository.save(restaurante);
     }
 
-    public Optional<Restaurante> buscarRestaurantePorId(Long id) {
-        Optional<Restaurante> restaurante = repository.findById(id);
-        if (restaurante == null) {
-            throw new IllegalArgumentException("ID não existe");
-        }
+    @Transactional
+    public Restaurante buscarRestaurantePorId(Long id) {
+
+        Restaurante restaurante = getRestauranteAtivo(id);
         return restaurante;
+    }
+
+    public Page<Restaurante> listarRestaurantes(Pageable paginacao) {
+
+        return repository.findAllByAtivoTrue(paginacao);
     }
 
     @Transactional
     public Restaurante atualizarCampos(Long id, Restaurante restauranteAtualizado) {
 
-        Restaurante restaurante = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("ID não encontrado"));
+        Restaurante restaurante = getRestauranteAtivo(id);
 
         if (restauranteAtualizado.getNome() != null) {
             restaurante.setNome(restauranteAtualizado.getNome());
@@ -47,12 +50,15 @@ public class RestauranteService {
     @Transactional
     public Restaurante inativar(Long id) {
 
-        Restaurante restaurante = repository.findByIdAndIsAtivoEquals(id, true)
-                .orElseThrow(() -> new EntityNotFoundException("O id informado: %s não existe!".formatted(id)));
+        Restaurante restaurante = getRestauranteAtivo(id);
         restaurante.setAtivo(false);
-        return restaurante;
 
+        return repository.save(restaurante);
+    }
 
+    private Restaurante getRestauranteAtivo(Long id) {
+        return repository.findByIdAndAtivoEquals(id, true)
+                .orElseThrow(() -> new EntityNotFoundException("O Restaurante com o id informado: %s não existe!".formatted(id)));
     }
 }
 
