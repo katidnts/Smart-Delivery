@@ -115,12 +115,16 @@ O projeto utiliza **Flyway** para versionamento do banco.
 
 ```json
 {
-  "nome": "Restaurante Exemplo",
+  "nome": "Dogão gourmet",
+  "telefone": 2199984400,
   "endereco": {
-    "rua": "Rua A",
-    "cidade": "São Paulo",
-    "estado": "SP",
-    "cep": "00000-000"
+    "cep": "11111000",
+    "logradouro": "Rua da feira",
+    "numero": "5",
+    "complemento": "2",
+    "bairro": "Centro",
+    "cidade": "Rio de Janeiro",
+    "uf": "RJ"
   }
 }
 ```
@@ -145,6 +149,22 @@ O projeto utiliza **Flyway** para versionamento do banco.
 
 ---
 
+
+### 📄 Listar restaurantes (paginado)
+
+`GET /restaurantes`
+
+#### Parâmetros de query:
+
+- `page` → número da página (default: 0)
+- `size` → quantidade de registros por página (default: 10)
+- `sort` → ordenação (ex: nome,asc)
+
+#### Exemplo de requisição:
+
+GET /restaurantes?page=0&size=10&sort=nome,asc
+
+---
 ## 📮 Collection do Postman
 
 A collection para testes da API está disponível no projeto:
