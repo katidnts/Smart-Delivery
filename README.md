@@ -7,12 +7,57 @@ Este módulo da aplicação **SmartDelivery** é responsável pelo gerenciamento
 ## 🚀 Funcionalidades
 
 * Cadastro de restaurantes
+* Integração com API externa para busca de endereço por CEP
+* Preenchimento automático de dados como rua, bairro, cidade e estado
 * Atualização de dados (total e parcial)
 * Inativação de restaurantes
 * Associação de restaurante com endereço
 * Listagem de restaurantes com paginação
 * Busca de restaurantes pelo ID
 
+
+---
+
+## 🌐 Integrações externas
+
+A aplicação realiza integração com a API pública do ViaCEP para consulta de endereços a partir do CEP informado.
+
+### 🔄 Fluxo de funcionamento
+
+1. O usuário informa o CEP no cadastro do restaurante
+2. O backend realiza uma requisição HTTP para a API ViaCEP
+3. Os dados retornados (logradouro, bairro, cidade e UF) são utilizados para completar automaticamente o endereço
+4. O endereço completo é associado ao restaurante antes de ser salvo no banco
+
+### 🎯 Benefícios
+
+- Redução de erros de digitação
+- Melhor experiência do usuário
+- Padronização dos dados de endereço
+- Menor dependência de entrada manual de dados
+
+---
+
+## 🛠️ Detalhes técnicos
+
+A integração com a API de CEP foi implementada utilizando o RestClient do Spring Framework.
+
+Foi criado um serviço dedicado (`CepService`) responsável por:
+
+- Realizar a chamada HTTP para a API externa
+- Validar o CEP informado
+- Tratar respostas inválidas (ex: CEP inexistente)
+- Mapear os dados retornados para um DTO interno (`EnderecoParcialDTO`)
+
+A aplicação utiliza DTOs distintos para cada responsabilidade:
+
+- Entrada de dados (`DadosEnderecoRequestDTO`) → recebe apenas CEP, número e complemento
+- Resposta da API (`DadosEnderecoResponseDTO`) → retorna o endereço completo para o cliente da API
+- Integração externa (`CepResponseDTO`) → representa a resposta da API ViaCEP
+- DTO intermediário (`EnderecoParcialDTO`) → utilizado para desacoplar a API externa da lógica interna
+- Domínio interno → entidade `Endereco`
+
+Essa separação garante baixo acoplamento com a API externa e maior facilidade de manutenção.
 
 ---
 
@@ -24,9 +69,14 @@ Este módulo da aplicação **SmartDelivery** é responsável pelo gerenciamento
 br.com.katidantas.smartdelivery
 │
 ├── endereco
+│   ├── CepController
+│   ├── CepService
+│   ├── CepResponseDTO
 │   ├── Endereco
-│   └── DadosEndereco
-│
+│   ├── EnderecoParcialDTO
+│   ├── DadosEnderecoRequestDTO
+│   ├── DadosEnderecoResponseDTO
+│   └── RestClientConfig
 ├── restaurante
 │   ├── Restaurante
 │   ├── RestauranteController
@@ -87,7 +137,9 @@ Os DTOs são usados para evitar exposição direta das entidades.
 * `DadosAtualizacaoRestauranteDTO` → Atualização de dados
 * `DadosDetalhamentoRestauranteDTO` → Retorno detalhado
 * `DadosListaRestauranteDTO` → Representação simplificada para listagem
-* `DadosEndereco` → Estrutura de endereço
+* `DadosEnderecoRequestDTO` → Entrada de dados do endereço
+* `DadosEnderecoResponseDTO` → Retorno de dados do endereço
+* `EnderecoParcialDTO` → DTO intermediário para integração com CEP
 
 ---
 
@@ -116,15 +168,11 @@ O projeto utiliza **Flyway** para versionamento do banco.
 ```json
 {
   "nome": "Dogão gourmet",
-  "telefone": 2199984400,
+  "telefone": "2199984400",
   "endereco": {
-    "cep": "11111000",
-    "logradouro": "Rua da feira",
-    "numero": "5",
-    "complemento": "2",
-    "bairro": "Centro",
-    "cidade": "Rio de Janeiro",
-    "uf": "RJ"
+    "cep": "22220001",
+    "numero": "214",
+    "complemento": "2"
   }
 }
 ```
@@ -176,7 +224,6 @@ A collection para testes da API está disponível no projeto:
 1. Abra o Postman
 2. Clique em **Import**
 3. Selecione o arquivo dentro da pasta `postman`
-4. Execute os endpoints disponíveis
 4. Execute os endpoints disponíveis
 
 ---
