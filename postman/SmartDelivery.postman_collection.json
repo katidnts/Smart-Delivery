@@ -14,7 +14,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "\t{\r\n\t    \"nome\": \"Pizza Joll\",\r\n\t\t\"telefone\": 2199987522,\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22222000\",\r\n\t\t\t\"logradouro\": \"Rua Santos\",\r\n\t\t\t\"numero\": \"21\",\r\n\t\t\t\"complemento\": \"4010\",\r\n\t\t\t\"bairro\": \"Centro\",\r\n\t\t\t\"cidade\": \"Rio de Janeiro\",\r\n\t\t\t\"estado\": \"Rio de Janeiro\",\r\n\t\t\t\"uf\": \"RJ\"\r\n\t\t\t}\r\n\t}",
+          "raw": "\t{\r\n\t    \"nome\": \"Joe joe\",\r\n\t\t\"telefone\": \"2199989999\",\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22220001\",\r\n\t\t\t\"numero\": \"214\",\r\n\t\t\t\"complemento\": \"2\"\r\n\t\t\t}\r\n\t}",
           "options": {
             "raw": {
               "language": "json"
@@ -22,12 +22,10 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8080/restaurantes",
-          "protocol": "http",
+          "raw": "{{base_url}}/restaurantes",
           "host": [
-            "localhost"
+            "{{base_url}}"
           ],
-          "port": "8080",
           "path": [
             "restaurantes"
           ]
@@ -41,12 +39,10 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/restaurantes/3",
-          "protocol": "http",
+          "raw": "{{base_url}}/restaurantes/3",
           "host": [
-            "localhost"
+            "{{base_url}}"
           ],
-          "port": "8080",
           "path": [
             "restaurantes",
             "3"
@@ -62,7 +58,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"telefone\": \"77777777\"\r\n\r\n}",
+          "raw": "{\r\n  \"telefone\": \"11111111\"\r\n\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -70,15 +66,13 @@
           }
         },
         "url": {
-          "raw": "http://localhost:8080/restaurantes/3",
-          "protocol": "http",
+          "raw": "{{base_url}}/restaurantes/9",
           "host": [
-            "localhost"
+            "{{base_url}}"
           ],
-          "port": "8080",
           "path": [
             "restaurantes",
-            "3"
+            "9"
           ]
         }
       },
@@ -90,15 +84,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/restaurantes/5",
-          "protocol": "http",
+          "raw": "{{base_url}}/restaurantes/9",
           "host": [
-            "localhost"
+            "{{base_url}}"
           ],
-          "port": "8080",
           "path": [
             "restaurantes",
-            "5"
+            "9"
           ]
         }
       },
@@ -108,7 +100,30 @@
       "name": "Listar restaurantes com paginação",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/restaurantes?page=0&size=10&sort=nome",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "restaurantes"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "sort",
+              "value": "nome"
+            }
+          ]
+        }
       },
       "response": []
     }
