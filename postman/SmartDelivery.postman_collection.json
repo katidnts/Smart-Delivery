@@ -14,7 +14,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "\t{\r\n\t    \"nome\": \"Joe joe\",\r\n\t\t\"telefone\": \"2199989999\",\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22220001\",\r\n\t\t\t\"numero\": \"214\",\r\n\t\t\t\"complemento\": \"2\"\r\n\t\t\t}\r\n\t}",
+          "raw": "\t{\r\n\t    \"nome\": \"Joe joe\",\r\n\t\t\"telefone\": \"2188889991\",\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22220001\",\r\n\t\t\t\"numero\": \"21\",\r\n\t\t\t\"complemento\": \"3\"\r\n\t\t\t}\r\n\t}",
           "options": {
             "raw": {
               "language": "json"
@@ -122,6 +122,36 @@
               "key": "sort",
               "value": "nome"
             }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar endereço por CEP",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/endereco/22220001",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "endereco",
+            "22220001"
           ]
         }
       },
