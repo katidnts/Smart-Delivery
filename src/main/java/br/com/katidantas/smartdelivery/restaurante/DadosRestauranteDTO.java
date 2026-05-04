@@ -4,6 +4,7 @@ import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 
 public record DadosRestauranteDTO(
@@ -11,6 +12,9 @@ public record DadosRestauranteDTO(
         String nome,
         @NotBlank
         String telefone,
+        @CNPJ
+        @NotBlank
+        String cnpj,
         @NotNull
         @Valid
         DadosEnderecoRequestDTO endereco
@@ -19,6 +23,10 @@ public record DadosRestauranteDTO(
         Restaurante restaurante = new Restaurante();
         restaurante.setAtivo(true);
         restaurante.setNome(this.nome);
+
+        String cnpjLimpo = this.cnpj.replaceAll("\\D", "");
+        restaurante.setCnpj(cnpjLimpo);
+        
         restaurante.setTelefone(this.telefone);
         restaurante.setEndereco(this.endereco.toEntity());
         return restaurante;

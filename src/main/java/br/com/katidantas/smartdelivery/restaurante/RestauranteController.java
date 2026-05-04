@@ -26,8 +26,7 @@ public class RestauranteController {
 
     @PostMapping
     public ResponseEntity<DadosDetalhamentoRestauranteDTO> criar(@RequestBody @Valid DadosRestauranteDTO dadosRestauranteDTO, UriComponentsBuilder uriBuilder) {
-        Restaurante restaurante = dadosRestauranteDTO.toEntity();
-        service.save(restaurante);
+        Restaurante restaurante = service.save(dadosRestauranteDTO.toEntity());
         URI uri = uriBuilder.path(RESTAURANTES_PATH_ID)
                 .buildAndExpand(restaurante.getId())
                 .toUri();

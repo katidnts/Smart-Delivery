@@ -6,6 +6,7 @@ public record DadosDetalhamentoRestauranteDTO(
         Long id,
         String nome,
         String telefone,
+        String cnpj,
         DadosEnderecoResponseDTO endereco
 ) {
     public DadosDetalhamentoRestauranteDTO(Restaurante restaurante) {
@@ -13,6 +14,7 @@ public record DadosDetalhamentoRestauranteDTO(
                 restaurante.getId(),
                 restaurante.getNome(),
                 restaurante.getTelefone(),
+                restaurante.getCnpj(),
                 DadosEnderecoResponseDTO.fromEntity(restaurante.getEndereco())
         );
     }
