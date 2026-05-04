@@ -2,8 +2,12 @@ package br.com.katidantas.smartdelivery.restaurante;
 
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 @Entity(name = "restaurante")
 @Table(name = "restaurantes")
@@ -18,6 +22,8 @@ public class Restaurante {
     private String nome;
 
     private String telefone;
+
+    private String cnpj;
 
     @OneToOne(cascade= CascadeType.ALL)
     @JoinColumn(name = "id_endereco")
