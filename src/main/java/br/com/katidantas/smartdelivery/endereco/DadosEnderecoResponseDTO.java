@@ -24,10 +24,7 @@ public record DadosEnderecoResponseDTO(
                 endereco.getCidade(),
                 endereco.getUf());
 
-
-
         return dadosEndereco;
     }
-
 
 }
