@@ -1,10 +1,9 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoResponseDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
@@ -19,10 +18,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RestauranteController.class)
@@ -38,48 +36,48 @@ public class RestauranteControllerTest {
     @MockitoBean
     private RestauranteService restauranteService;
 
+    public Restaurante criaRestauranteMock() {
 
-    private DadosEnderecoRequestDTO dadosEnderecoRequestDTO() {
-        return new DadosEnderecoRequestDTO("22220001",
-                "52",
-                "902"
-        );
+        Endereco endereco = new Endereco();
+        endereco.setCep("22220001");
+        endereco.setLogradouro("Rua do Catete");
+        endereco.setNumero("52");
+        endereco.setComplemento("902");
+        endereco.setBairro("Catete");
+        endereco.setCidade("Rio de janeiro");
+        endereco.setUf("RJ");
+
+        Restaurante restauranteMock = new Restaurante();
+        restauranteMock.setId(1L);
+        restauranteMock.setNome("The best coffee");
+        restauranteMock.setTelefone("999999999");
+        restauranteMock.setCnpj("11222333000181");
+        restauranteMock.setEndereco(endereco);
+        restauranteMock.setAtivo(true);
+
+        return restauranteMock;
     }
 
-    private DadosEnderecoResponseDTO dadosEnderecoResponseDTO() {
-        return new DadosEnderecoResponseDTO(
-                "22220001",
-                "Rua do Catete",
-                "52",
-                "902",
-                "Catete",
-                "Rio de Janeiro",
-                "RJ"
+    public DadosAtualizacaoRestauranteDTO criaDTOAtualizacao() {
+        DadosAtualizacaoRestauranteDTO dtoValido = new DadosAtualizacaoRestauranteDTO(
+                1L,
+                "Café atualizado",
+                "888888888",
+                null
         );
+        return dtoValido;
     }
-
 
     @Test
     void deveCadastrarRestaurante_quandoDadosValidos() throws Exception {
 
-        DadosRestauranteDTO dadosRestauranteDTO = new DadosRestauranteDTO(
-                "Bar do Zezé",
-                "999999999",
-                "12345678000195",
-                dadosEnderecoRequestDTO()
-        );
-
-        Restaurante restauranteMock = dadosRestauranteDTO.toEntity();
-        restauranteMock.getEndereco().setLogradouro("Rua do Catete");
-        restauranteMock.getEndereco().setBairro("Catete");
-        restauranteMock.getEndereco().setCidade("Rio de Janeiro");
-        restauranteMock.getEndereco().setUf("RJ");
+        Restaurante restauranteMock = criaRestauranteMock();
 
         when(restauranteService.save(any())).thenReturn(restauranteMock);
 
         String responseBody = mockMvc.perform(post("/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dadosRestauranteDTO))
+                        .content(objectMapper.writeValueAsString(restauranteMock))
                 )
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -88,41 +86,28 @@ public class RestauranteControllerTest {
 
         DadosDetalhamentoRestauranteDTO responseDTO = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
 
-        assertThat(responseDTO.nome()).isEqualTo(dadosRestauranteDTO.nome());
-        assertThat(responseDTO.telefone()).isEqualTo(dadosRestauranteDTO.telefone());
-        assertThat(responseDTO.cnpj()).isEqualTo(dadosRestauranteDTO.cnpj());
-        assertThat(responseDTO.endereco().cep()).isEqualTo(dadosRestauranteDTO.endereco().cep());
-        assertThat(responseDTO.endereco().numero()).isEqualTo(dadosRestauranteDTO.endereco().numero());
-        assertThat(responseDTO.endereco().complemento()).isEqualTo(dadosRestauranteDTO.endereco().complemento());
-        assertThat(responseDTO.endereco().logradouro()).isEqualTo(restauranteMock.getEndereco().getLogradouro());
-        assertThat(responseDTO.endereco().bairro()).isEqualTo(restauranteMock.getEndereco().getBairro());
-        assertThat(responseDTO.endereco().localidade()).isEqualTo(restauranteMock.getEndereco().getCidade());
-        assertThat(responseDTO.endereco().uf()).isEqualTo(restauranteMock.getEndereco().getUf());
+        Endereco endereco = restauranteMock.getEndereco();
+
+        assertThat(responseDTO.nome()).isEqualTo(restauranteMock.getNome());
+        assertThat(responseDTO.telefone()).isEqualTo(restauranteMock.getTelefone());
+        assertThat(responseDTO.cnpj()).isEqualTo(restauranteMock.getCnpj());
+        assertThat(responseDTO.endereco().cep()).isEqualTo(endereco.getCep());
+        assertThat(responseDTO.endereco().numero()).isEqualTo(endereco.getNumero());
+        assertThat(responseDTO.endereco().complemento()).isEqualTo(endereco.getComplemento());
+        assertThat(responseDTO.endereco().logradouro()).isEqualTo(endereco.getLogradouro());
+        assertThat(responseDTO.endereco().bairro()).isEqualTo(endereco.getBairro());
+        assertThat(responseDTO.endereco().localidade()).isEqualTo(endereco.getCidade());
+        assertThat(responseDTO.endereco().uf()).isEqualTo(endereco.getUf());
 
     }
 
 
     @Test
     void deveBuscarRestaurante_QuandoIdValido() throws Exception {
-        var restaurante = new Restaurante();
-        restaurante.setId(1L);
-        restaurante.setNome("Bar do Zezé");
-        restaurante.setTelefone("999999999");
-        restaurante.setCnpj("12345678000195");
-        restaurante.setEndereco(new Endereco(
-                1L,
-                "22220001",
-                "Rua do Catete",
-                "52",
-                "902",
-                "Catete",
-                "Rio de Janeiro",
-                "Uf"
-        ));
-        restaurante.setAtivo(true);
 
+        Restaurante restauranteMock = criaRestauranteMock();
 
-        when(restauranteService.buscarRestaurantePorId(1L)).thenReturn(restaurante);
+        when(restauranteService.buscarRestaurantePorId(1L)).thenReturn(restauranteMock);
 
         String responseBody = mockMvc.perform(get("/restaurantes/1"))
                 .andExpect(status().isOk())
@@ -132,17 +117,17 @@ public class RestauranteControllerTest {
 
         DadosDetalhamentoRestauranteDTO response = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
 
-        assertThat(response.id()).isEqualTo(restaurante.getId());
-        assertThat(response.nome()).isEqualTo(restaurante.getNome());
-        assertThat(response.telefone()).isEqualTo(restaurante.getTelefone());
-        assertThat(response.cnpj()).isEqualTo(restaurante.getCnpj());
-        assertThat(response.endereco().cep()).isEqualTo(restaurante.getEndereco().getCep());
-        assertThat(response.endereco().logradouro()).isEqualTo(restaurante.getEndereco().getLogradouro());
-        assertThat(response.endereco().numero()).isEqualTo(restaurante.getEndereco().getNumero());
-        assertThat(response.endereco().complemento()).isEqualTo(restaurante.getEndereco().getComplemento());
-        assertThat(response.endereco().bairro()).isEqualTo(restaurante.getEndereco().getBairro());
-        assertThat(response.endereco().localidade()).isEqualTo(restaurante.getEndereco().getCidade());
-        assertThat(response.endereco().uf()).isEqualTo(restaurante.getEndereco().getUf());
+        assertThat(response.id()).isEqualTo(restauranteMock.getId());
+        assertThat(response.nome()).isEqualTo(restauranteMock.getNome());
+        assertThat(response.telefone()).isEqualTo(restauranteMock.getTelefone());
+        assertThat(response.cnpj()).isEqualTo(restauranteMock.getCnpj());
+        assertThat(response.endereco().cep()).isEqualTo(restauranteMock.getEndereco().getCep());
+        assertThat(response.endereco().logradouro()).isEqualTo(restauranteMock.getEndereco().getLogradouro());
+        assertThat(response.endereco().numero()).isEqualTo(restauranteMock.getEndereco().getNumero());
+        assertThat(response.endereco().complemento()).isEqualTo(restauranteMock.getEndereco().getComplemento());
+        assertThat(response.endereco().bairro()).isEqualTo(restauranteMock.getEndereco().getBairro());
+        assertThat(response.endereco().localidade()).isEqualTo(restauranteMock.getEndereco().getCidade());
+        assertThat(response.endereco().uf()).isEqualTo(restauranteMock.getEndereco().getUf());
 
     }
 
@@ -198,6 +183,60 @@ public class RestauranteControllerTest {
         assertThat(response.getContent().getFirst().nome()).isEqualTo("Casa da feijoada");
         assertThat(response.getContent().getLast().nome()).isEqualTo("Casa do Sushi");
 
+    }
+
+    @Test
+    void deveAtualizarRestaurante() throws Exception {
+
+        Restaurante restauranteMock = criaRestauranteMock();
+        DadosAtualizacaoRestauranteDTO dtoValido = criaDTOAtualizacao();
+
+        ArgumentCaptor<Restaurante> restauranteArgumentCaptor = ArgumentCaptor.forClass(Restaurante.class);
+
+        Long id = 1L;
+        when(restauranteService.atualizarCampos(eq(id), restauranteArgumentCaptor.capture())).thenReturn(restauranteMock);
+
+        String responseBody = mockMvc.perform(patch("/restaurantes/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoValido))
+
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Restaurante restauranteArgumentCaptorValue = restauranteArgumentCaptor.getValue();
+
+
+        DadosDetalhamentoRestauranteDTO response = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
+
+
+        assertThat(response.nome()).isEqualTo(restauranteMock.getNome());
+        assertThat(response.telefone()).isEqualTo(restauranteMock.getTelefone());
+        assertThat(response.cnpj()).isEqualTo(restauranteMock.getCnpj());
+        assertThat(response.endereco().cep()).isEqualTo(restauranteMock.getEndereco().getCep());
+        assertThat(response.endereco().logradouro()).isEqualTo(restauranteMock.getEndereco().getLogradouro());
+        assertThat(response.endereco().numero()).isEqualTo(restauranteMock.getEndereco().getNumero());
+        assertThat(response.endereco().complemento()).isEqualTo(restauranteMock.getEndereco().getComplemento());
+        assertThat(response.endereco().bairro()).isEqualTo(restauranteMock.getEndereco().getBairro());
+        assertThat(response.endereco().localidade()).isEqualTo(restauranteMock.getEndereco().getCidade());
+        assertThat(response.endereco().uf()).isEqualTo(restauranteMock.getEndereco().getUf());
+
+    }
+
+    @Test
+    void deveDeletarRestauranteQuandoIdValido() throws Exception {
+
+        Restaurante restauranteMock = criaRestauranteMock();
+        Long id = restauranteMock.getId();
+
+        when(restauranteService.inativar(id)).thenReturn(restauranteMock);
+
+        mockMvc.perform(delete("/restaurantes/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
+
+        verify(restauranteService, times(1)).inativar(id);
     }
 }
 

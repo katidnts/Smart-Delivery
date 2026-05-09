@@ -13,6 +13,8 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @Table(name = "restaurantes")
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Restaurante {
 
     @Id
