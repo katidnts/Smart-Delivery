@@ -1,5 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
+import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -41,40 +43,95 @@ public class RestauranteControllerTest {
     void deveCadastrarRestaurante_quandoDadosValidos() throws Exception {
 
         Restaurante restauranteMock = criaRestauranteMock();
+        DadosRestauranteDTO dtoValido = criaDTOCadastro();
 
         when(restauranteService.save(any())).thenReturn(restauranteMock);
 
         String responseBody = mockMvc.perform(post("/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(restauranteMock))
+                        .content(objectMapper.writeValueAsString(dtoValido))
                 )
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        ArgumentCaptor<Restaurante> captor = ArgumentCaptor.forClass(Restaurante.class);
-        verify(restauranteService).save(captor.capture());
-        Restaurante restauranteCapturado = captor.getValue();
+        ArgumentCaptor<Restaurante> restauranteArgumentCaptor = ArgumentCaptor.forClass(Restaurante.class);
+        verify(restauranteService).save(restauranteArgumentCaptor.capture());
+
+        assertDtoCadastroCorrespondeEntidade(dtoValido, restauranteArgumentCaptor.getValue());
 
         DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTO = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
 
-        assertDtoCorrespondeEntidade(dadosDetalhamentoRestauranteDTO, restauranteCapturado);
+        assertDtoCorrespondeEntidade(dadosDetalhamentoRestauranteDTO, restauranteMock);
     }
-
 
     @Test
     void deveBuscarRestaurante_QuandoIdValido() throws Exception {
 
         Restaurante restauranteMock = criaRestauranteMock();
+        Long id = 1L;
+        when(restauranteService.buscarRestaurantePorId(id)).thenReturn(restauranteMock);
 
-        when(restauranteService.buscarRestaurantePorId(1L)).thenReturn(restauranteMock);
-
-        String responseBody = mockMvc.perform(get("/restaurantes/1"))
+        String responseBody = mockMvc.perform(get("/restaurantes/{id}", id))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+
+        verify(restauranteService).buscarRestaurantePorId(id);
+
+        DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTO = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
+
+        assertDtoCorrespondeEntidade(dadosDetalhamentoRestauranteDTO, restauranteMock);
+
+    }
+
+    @Test
+    void deveBuscarListaDeRestaurantesAtivos() throws Exception {
+
+        List<Restaurante> restaurantesMock = criaListaRestauranteMock();
+        Page<Restaurante> page = new PageImpl<>(restaurantesMock);
+
+        when(restauranteService.listarRestaurantes(any(Pageable.class))).thenReturn(page);
+
+        String responseBody = mockMvc.perform(get("/restaurantes"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(restauranteService).listarRestaurantes(any(Pageable.class));
+
+        RestaurantePage dto = objectMapper.readValue(responseBody, RestaurantePage.class);
+
+        assertListaCorrespondeEntidades(dto.getContent(), restaurantesMock);
+
+    }
+
+    @Test
+    void deveAtualizarRestaurante() throws Exception {
+
+        Restaurante restauranteMock = criaRestauranteMock();
+        DadosAtualizacaoRestauranteDTO dtoValido = criaDTOAtualizacao();
+
+        Long id = 1L;
+        when(restauranteService.atualizarCampos(eq(id), any())).thenReturn(restauranteMock);
+
+        String responseBody = mockMvc.perform(patch("/restaurantes/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoValido))
+
+                ).andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        ArgumentCaptor<Long> idArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Restaurante> restauranteArgumentCaptor = ArgumentCaptor.forClass(Restaurante.class);
+        verify(restauranteService).atualizarCampos(idArgumentCaptor.capture(), restauranteArgumentCaptor.capture());
+
+        assertDtoAtualizacaoCorrespondeEntidade(dtoValido, restauranteArgumentCaptor.getValue());
 
         DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTOMock = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
 
@@ -83,7 +140,69 @@ public class RestauranteControllerTest {
     }
 
     @Test
-    void deveBuscarListaDeRestaurantesAtivos() throws Exception {
+    void deveDeletarRestauranteQuandoIdValido() throws Exception {
+
+        Restaurante restauranteMock = criaRestauranteMock();
+        Long id = restauranteMock.getId();
+
+        when(restauranteService.inativar(id)).thenReturn(restauranteMock);
+
+        mockMvc.perform(delete("/restaurantes/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
+
+        ArgumentCaptor<Long> idArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(restauranteService).inativar(idArgumentCaptor.capture());
+        assertThat(idArgumentCaptor.getValue()).isEqualTo(id);
+    }
+
+
+    public Restaurante criaRestauranteMock() {
+
+        Endereco endereco = new Endereco();
+        endereco.setCep("22220001");
+        endereco.setLogradouro("Rua do Catete");
+        endereco.setNumero("52");
+        endereco.setComplemento("902");
+        endereco.setBairro("Catete");
+        endereco.setCidade("Rio de janeiro");
+        endereco.setUf("RJ");
+
+        Restaurante entidade = new Restaurante();
+        entidade.setId(1L);
+        entidade.setNome("The best coffee");
+        entidade.setTelefone("999999999");
+        entidade.setCnpj("11222333000181");
+        entidade.setEndereco(endereco);
+        entidade.setAtivo(true);
+
+        return entidade;
+    }
+
+    private DadosRestauranteDTO criaDTOCadastro() {
+        DadosEnderecoRequestDTO enderecoRequestDTO = new DadosEnderecoRequestDTO(
+                "22220001",
+                "52",
+                "902"
+        );
+
+        return new DadosRestauranteDTO(
+                "The best coffee",
+                "999999999",
+                "11222333000181",
+                enderecoRequestDTO
+        );
+    }
+
+    private void assertDtoCadastroCorrespondeEntidade(DadosRestauranteDTO dtoValido, Restaurante restaurante) {
+
+        assertThat(restaurante.getNome()).isEqualTo(dtoValido.nome());
+        assertThat(restaurante.getTelefone()).isEqualTo(dtoValido.telefone());
+        assertThat(restaurante.getCnpj()).isEqualTo(dtoValido.cnpj().replaceAll("\\D", ""));
+        assertThat(restaurante.getEndereco()).isNotNull();
+    }
+
+    private List<Restaurante> criaListaRestauranteMock() {
         var restaurante1 = new Restaurante();
         restaurante1.setAtivo(true);
         restaurante1.setNome("Casa da feijoada");
@@ -115,93 +234,21 @@ public class RestauranteControllerTest {
                 "Rio de Janeiro",
                 "Uf"
         ));
-
-        Page<Restaurante> page = new PageImpl<>(List.of(restaurante1, restaurante2));
-
-        when(restauranteService.listarRestaurantes(any(Pageable.class))).thenReturn(page);
-
-        String responseBody = mockMvc.perform(get("/restaurantes"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        verify(restauranteService).listarRestaurantes(any(Pageable.class));
-
-        RestaurantePage dto = objectMapper.readValue(responseBody, RestaurantePage.class);
-
-        assertThat(dto.getContent()).hasSize(2);
-        assertThat(dto.getContent().getFirst().nome()).isEqualTo("Casa da feijoada");
-        assertThat(dto.getContent().getLast().nome()).isEqualTo("Casa do Sushi");
-
+        return List.of(restaurante1, restaurante2);
     }
 
-    @Test
-    void deveAtualizarRestaurante() throws Exception {
-
-        Restaurante restauranteMock = criaRestauranteMock();
-        DadosAtualizacaoRestauranteDTO dtoValido = criaDTOAtualizacao();
-
-        ArgumentCaptor<Restaurante> restauranteArgumentCaptor = ArgumentCaptor.forClass(Restaurante.class);
-
-        Long id = 1L;
-        when(restauranteService.atualizarCampos(eq(id), restauranteArgumentCaptor.capture())).thenReturn(restauranteMock);
-
-        String responseBody = mockMvc.perform(patch("/restaurantes/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dtoValido))
-
-                ).andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        Restaurante restauranteArgumentCaptorValue = restauranteArgumentCaptor.getValue();
-
-
-        DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTOMock = objectMapper.readValue(responseBody, DadosDetalhamentoRestauranteDTO.class);
-
-        assertDtoCorrespondeEntidade(dadosDetalhamentoRestauranteDTOMock, restauranteMock);
-
+    private void assertListaCorrespondeEntidades(List<DadosListaRestauranteDTO> dtos, List<Restaurante> restaurantes) {
+        assertThat(dtos).hasSize(restaurantes.size());
+        for (int i = 0; i < dtos.size(); i++) {
+            assertDtoListaCorrespondeEntidade(dtos.get(i), restaurantes.get(i));
+        }
     }
 
-    @Test
-    void deveDeletarRestauranteQuandoIdValido() throws Exception {
-
-        Restaurante entidade = criaRestauranteMock();
-        Long id = entidade.getId();
-
-        when(restauranteService.inativar(id)).thenReturn(entidade);
-
-        mockMvc.perform(delete("/restaurantes/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isNoContent());
-
-        verify(restauranteService, times(1)).inativar(id);
+    private void assertDtoListaCorrespondeEntidade(DadosListaRestauranteDTO dto, Restaurante restaurante) {
+        assertThat(dto.nome()).isEqualTo(restaurante.getNome());
+        assertThat(dto.telefone()).isEqualTo(restaurante.getTelefone());
+        assertThat(dto.endereco()).isNotNull();
     }
-
-    public Restaurante criaRestauranteMock() {
-
-        Endereco endereco = new Endereco();
-        endereco.setCep("22220001");
-        endereco.setLogradouro("Rua do Catete");
-        endereco.setNumero("52");
-        endereco.setComplemento("902");
-        endereco.setBairro("Catete");
-        endereco.setCidade("Rio de janeiro");
-        endereco.setUf("RJ");
-
-        Restaurante entidade = new Restaurante();
-        entidade.setId(1L);
-        entidade.setNome("The best coffee");
-        entidade.setTelefone("999999999");
-        entidade.setCnpj("11222333000181");
-        entidade.setEndereco(endereco);
-        entidade.setAtivo(true);
-
-        return entidade;
-    }
-
 
     public DadosAtualizacaoRestauranteDTO criaDTOAtualizacao() {
         DadosAtualizacaoRestauranteDTO dtoValido = new DadosAtualizacaoRestauranteDTO(
@@ -226,6 +273,13 @@ public class RestauranteControllerTest {
         assertThat(dto.endereco().bairro()).isEqualTo(entidade.getEndereco().getBairro());
         assertThat(dto.endereco().localidade()).isEqualTo(entidade.getEndereco().getCidade());
         assertThat(dto.endereco().uf()).isEqualTo(entidade.getEndereco().getUf());
+    }
+
+    private void assertDtoAtualizacaoCorrespondeEntidade(DadosAtualizacaoRestauranteDTO dtoValido, Restaurante restaurante) {
+
+        assertThat(restaurante.getNome()).isEqualTo(dtoValido.nome());
+        assertThat(restaurante.getTelefone()).isEqualTo(dtoValido.telefone());
+
     }
 }
 
