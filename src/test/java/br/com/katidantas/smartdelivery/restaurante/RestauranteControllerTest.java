@@ -347,7 +347,7 @@ public class RestauranteControllerTest {
                 "902",
                 "Catete",
                 "Rio de Janeiro",
-                "Uf"
+                "RJ"
         ));
 
         var restaurante2 = new Restaurante();
@@ -363,7 +363,7 @@ public class RestauranteControllerTest {
                 "902",
                 "Catete",
                 "Rio de Janeiro",
-                "Uf"
+                "RJ"
         ));
         return List.of(restaurante1, restaurante2);
     }

@@ -1,10 +1,7 @@
 package br.com.katidantas.smartdelivery.endereco;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity(name = "endereco")
 @Table(name = "enderecos")
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"cep", "logradouro", "numero", "complemento", "bairro", "cidade", "uf"})
 public class Endereco {
 
     @Id
