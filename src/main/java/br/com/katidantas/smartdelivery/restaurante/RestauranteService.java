@@ -74,6 +74,7 @@ public class RestauranteService {
         return repository.save(restaurante);
     }
 
+    // TODO: diferenciar mensagem de erro para id não encontrado e restaurante inativo
     private Restaurante getRestauranteAtivo(Long id) {
         return repository.findByIdAndAtivoEquals(id, true)
                 .orElseThrow(() -> new EntityNotFoundException("O Restaurante com o id informado: %s não existe!".formatted(id)));

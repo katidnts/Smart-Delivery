@@ -5,6 +5,7 @@ import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
 
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -149,6 +151,67 @@ public class RestauranteServiceTest {
 
         verify(repository).findByIdAndAtivoEquals(restaurante.getId(), true);
 
+    }
+
+    @Test
+    @DisplayName("Deve retornar restaurante sem alteração quando todos os campos de restauranteAtualizado são null")
+    void deveRetornarRestaurante_QuandoTodosOsCamposSaoNull() {
+
+        //Given
+
+        Restaurante restauranteExistente = criaRestauranteMock();
+        Restaurante restauranteAtualizado = new Restaurante();
+
+        when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restauranteExistente));
+
+        //When
+
+        var resultado = restauranteService.atualizarCampos(1L, restauranteAtualizado);
+
+        //Then
+
+        assertThat(resultado.getNome()).isEqualTo(restauranteExistente.getNome());
+        assertThat(resultado.getTelefone()).isEqualTo(restauranteExistente.getTelefone());
+        assertThat(resultado.getEndereco()).isEqualTo(restauranteExistente.getEndereco());
+
+        verify(repository).findByIdAndAtivoEquals(1L, true);
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityNotFoundException ao tentar atualizar restaurante com ID não encontrado")
+    void deveLancarEntityNotFoundException_AoAtualizarRestauranteComIdNaoEncontrado() {
+
+        //Given
+        Restaurante restaurante = criaRestauranteMock();
+
+        when(repository.findByIdAndAtivoEquals(2L, true)).thenReturn(Optional.empty());
+
+        //Then
+
+        assertThatThrownBy(() -> restauranteService.atualizarCampos(2L, restaurante))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("O Restaurante com o id informado: 2 não existe!");
+
+        verify(repository).findByIdAndAtivoEquals(2L, true);
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityNotFoundException ao tentar atualizar restaurante inativo")
+    void deveLancarEntityNotFoundException_AoAtualizarRestauranteInativo() {
+
+        //Given
+        Restaurante restaurante = criaRestauranteMock();
+        restaurante.setAtivo(false);
+
+        when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.empty());
+
+        //Then
+
+        assertThatThrownBy(() -> restauranteService.atualizarCampos(1L, restaurante))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("O Restaurante com o id informado: 1 não existe!");
+
+        verify(repository).findByIdAndAtivoEquals(1L, true);
     }
 
     @Test
