@@ -72,6 +72,45 @@ public class RestauranteServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Deve lançar IllegalArgumentException quando CEP nulo ou com formato inválido")
+    void deveLancarIllegalArgumentException_QuandoCepNuloOuFormatoInvalido() {
+
+        //Given
+        Restaurante restaurante = criaRestauranteMock();
+        restaurante.getEndereco().setCep("2222000");
+
+        when(cepService.buscarCep("2222000")).thenThrow(new IllegalArgumentException("O CEP deve conter 8 dígitos"));
+
+        //Then
+
+        assertThatThrownBy(() -> restauranteService.save(restaurante))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("O CEP deve conter 8 dígitos");
+
+        verify(cepService).buscarCep("2222000");
+    }
+
+    @Test
+    @DisplayName("Deve lançar IllegalArgumentException quando CEP não existir na API")
+    void deveLancarIllegalArgumentException_QuandoCepNaoExistirNaApi() {
+
+        //Given
+
+        Restaurante restaurante = criaRestauranteMock();
+        restaurante.getEndereco().setCep("99999999");
+
+        when(cepService.buscarCep("99999999")).thenThrow(new IllegalArgumentException("CEP inválido!"));
+
+        //Then
+
+        assertThatThrownBy(() -> restauranteService.save(restaurante))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("CEP inválido!");
+
+        verify(cepService).buscarCep("99999999");
+
+    }
 
     @Test
     @DisplayName("Deve buscar um restaurante por ID quando o ID for válido")

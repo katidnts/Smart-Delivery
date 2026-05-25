@@ -7,4 +7,5 @@ public record EnderecoParcialDTO(
         String localidade,
         String uf
 ) {
+
 }
