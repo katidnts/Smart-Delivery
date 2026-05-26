@@ -15,7 +15,7 @@ public class CepService {
     public EnderecoParcialDTO buscarCep(String cep) {
 
         if (cep == null || !cep.matches("\\d{8}") ) {
-            throw new IllegalArgumentException("CEP deve conter 8 dígitos");
+            throw new CepInvalidoException("CEP deve conter 8 dígitos");
         }
 
         CepResponseDTO response = restClient.get()
@@ -24,7 +24,7 @@ public class CepService {
                 .body(CepResponseDTO.class);
 
         if (response.erro() != null && response.erro()) {
-            throw new IllegalArgumentException("CEP inválido!");
+            throw new CepInvalidoException("CEP inválido!");
         }
 
         return toEnderecoParcial(response);
