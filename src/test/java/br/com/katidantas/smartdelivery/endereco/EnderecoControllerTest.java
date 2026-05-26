@@ -66,4 +66,28 @@ public class EnderecoControllerTest {
         verify(cepService).buscarCep(cep);
     }
 
+    @Test
+    @DisplayName("Deve retornar 400 quando o CEP não existir ou for inválido")
+    void deveRetornar400_QuandoCepNaoForEncontrado() throws Exception {
+
+        //Given
+
+        String cep = "99999999";
+
+        when(cepService.buscarCep(cep)).thenThrow(new CepInvalidoException("CEP inválido!"));
+
+        //When
+
+        String responseBody = mockMvc.perform(get("/endereco/{cep}", cep))
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //Then
+
+        assertThat(responseBody).isEqualTo("CEP inválido!");
+        verify(cepService).buscarCep(cep);
+    }
+
 }
