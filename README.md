@@ -63,6 +63,14 @@ Link para a coleção do Postman com exemplos de requisições para todos os end
 
 ---
 
+## 🧪 Testes
+
+O projeto conta com testes automatizados cobrindo as camadas de **Controller** e **Service**, com cobertura atual de **88% das classes e 94% das linhas**.
+
+Os testes utilizam **JUnit 5**, **Mockito**, **AssertJ** e **MockMvc**, validando tanto a lógica de negócio isolada quanto os endpoints da API.
+
+---
+
 ## ▶️ Como executar o projeto
 
 ```bash
