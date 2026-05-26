@@ -75,7 +75,7 @@ public class CepServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar IllegalArgumentException quando o cep for nulo ou com formato inválido")
+    @DisplayName("Deve lançar CepInvalidoException quando o CEP for nulo ou com formato inválido")
     void deveLancarIllegalArgumentException_QuandoCepForNuloOuFormatoInvalido() {
 
         //Given
@@ -85,13 +85,13 @@ public class CepServiceTest {
         //Then
 
         assertThatThrownBy(() -> cepService.buscarCep(cep))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CepInvalidoException.class)
                 .hasMessage("CEP deve conter 8 dígitos");
 
     }
 
     @Test
-    @DisplayName("Deve lançar IllegalArgumentException quando o cep não existir na API")
+    @DisplayName("Deve lançar CepInvalidoException quando o CEP não existir na API")
     void deveLancarIllegalArgumentException_QuandoCepNaoExistirNaApi() {
 
         //Given
@@ -107,7 +107,7 @@ public class CepServiceTest {
         //Then
 
         assertThatThrownBy(() -> cepService.buscarCep(cep))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CepInvalidoException.class)
                 .hasMessage("CEP inválido!");
     }
 
