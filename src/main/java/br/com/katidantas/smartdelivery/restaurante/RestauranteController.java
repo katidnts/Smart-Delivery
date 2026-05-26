@@ -44,7 +44,7 @@ public class RestauranteController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListaRestauranteDTO>> buscarTodosOsRestaurantesAtivos(@PageableDefault(size = 10, sort = {"nome"})Pageable paginacao) {
+    public ResponseEntity<Page<DadosListaRestauranteDTO>> buscarTodosOsRestaurantesAtivos(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         Page<DadosListaRestauranteDTO> page = service.listarRestaurantes(paginacao).map(DadosListaRestauranteDTO::new);
         return ResponseEntity.ok(page);
     }

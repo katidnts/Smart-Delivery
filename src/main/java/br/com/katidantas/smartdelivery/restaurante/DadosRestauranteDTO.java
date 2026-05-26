@@ -26,7 +26,7 @@ public record DadosRestauranteDTO(
 
         String cnpjLimpo = this.cnpj.replaceAll("\\D", "");
         restaurante.setCnpj(cnpjLimpo);
-        
+
         restaurante.setTelefone(this.telefone);
         restaurante.setEndereco(this.endereco.toEntity());
         return restaurante;

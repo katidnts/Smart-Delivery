@@ -8,11 +8,11 @@ public record DadosListaRestauranteDTO(
         String telefone,
         DadosEnderecoResponseDTO endereco
 ) {
-   public DadosListaRestauranteDTO(Restaurante restaurante) {
-       this(
-               restaurante.getId(),
-               restaurante.getNome(),
-               restaurante.getTelefone(),
-               DadosEnderecoResponseDTO.fromEntity(restaurante.getEndereco()));
-   }
+    public DadosListaRestauranteDTO(Restaurante restaurante) {
+        this(
+                restaurante.getId(),
+                restaurante.getNome(),
+                restaurante.getTelefone(),
+                DadosEnderecoResponseDTO.fromEntity(restaurante.getEndereco()));
+    }
 }

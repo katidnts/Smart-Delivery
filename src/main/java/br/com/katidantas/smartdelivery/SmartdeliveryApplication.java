@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SmartdeliveryApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SmartdeliveryApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SmartdeliveryApplication.class, args);
+    }
 
 }

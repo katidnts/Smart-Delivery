@@ -12,7 +12,7 @@ public class EnderecoController {
 
     private final CepService cepService;
 
-    public EnderecoController(CepService cepService){
+    public EnderecoController(CepService cepService) {
         this.cepService = cepService;
     }
 

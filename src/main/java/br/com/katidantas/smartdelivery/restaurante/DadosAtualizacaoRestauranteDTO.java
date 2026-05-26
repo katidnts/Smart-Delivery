@@ -15,7 +15,7 @@ public record DadosAtualizacaoRestauranteDTO(
         Restaurante restaurante = new Restaurante();
         restaurante.setNome(this.nome);
         restaurante.setTelefone(this.telefone);
-        if(this.endereco() != null ) {
+        if (this.endereco() != null) {
             restaurante.setEndereco(this.endereco().toEntity());
         }
         return restaurante;

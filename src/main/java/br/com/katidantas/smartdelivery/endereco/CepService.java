@@ -14,7 +14,7 @@ public class CepService {
 
     public EnderecoParcialDTO buscarCep(String cep) {
 
-        if (cep == null || !cep.matches("\\d{8}") ) {
+        if (cep == null || !cep.matches("\\d{8}")) {
             throw new CepInvalidoException("CEP deve conter 8 dígitos");
         }
 
