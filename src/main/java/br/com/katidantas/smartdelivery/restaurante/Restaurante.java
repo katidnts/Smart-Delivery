@@ -1,5 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
+import br.com.katidantas.smartdelivery.cardapio.CardapioItem;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CNPJ;
+
+import java.util.List;
 
 @Entity(name = "restaurante")
 @Table(name = "restaurantes")
@@ -36,4 +39,7 @@ public class Restaurante {
     public Boolean isAtivo() {
         return ativo;
     }
+
+    @OneToOne(mappedBy = "restaurante", cascade = CascadeType.ALL)
+    private List<CardapioItem> cardapio;
 }
