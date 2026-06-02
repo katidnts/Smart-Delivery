@@ -76,8 +76,8 @@ public class RestauranteControllerTest {
     void deveCadastrarRestaurante_quandoNumeroEComplementoForemVazios() throws Exception {
 
         // Given
-        Restaurante restauranteMock = criaRestauranteMock("", "");
-        DadosRestauranteDTO dtoValido = criaDTOCadastro("", "");
+        Restaurante restauranteMock = criaRestauranteMock(null, null);
+        DadosRestauranteDTO dtoValido = criaDTOCadastro(null, null);
 
         when(restauranteService.save(any())).thenReturn(restauranteMock);
 
