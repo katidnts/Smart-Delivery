@@ -18,4 +18,15 @@ public record DadosCardapioItemDTO(
         String fotoUrl,
         @NotNull
         Boolean ativo) {
+
+    public CardapioItem toEntity() {
+        CardapioItem cardapioItem = new CardapioItem();
+        cardapioItem.setNome(this.nome);
+        cardapioItem.setCategoria(this.categoria);
+        cardapioItem.setDescricao(this.descricao);
+        cardapioItem.setPreco(this.preco);
+        cardapioItem.setFotoUrl(this.fotoUrl);
+        cardapioItem.setAtivo(true);
+        return cardapioItem;
+    }
 }
