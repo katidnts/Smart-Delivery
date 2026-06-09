@@ -4,19 +4,18 @@ import br.com.katidantas.smartdelivery.restaurante.Restaurante;
 import br.com.katidantas.smartdelivery.restaurante.RestauranteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jdk.jfr.RecordingState;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CardapioService {
 
-    private CardapioRepository repository;
+    private CardapioRepository cardapioRepository;
     private RestauranteRepository restauranteRepository;
 
     public CardapioService(CardapioRepository repository, RestauranteRepository restauranteRepository) {
-        this.repository = repository;
+        this.cardapioRepository = repository;
         this.restauranteRepository = restauranteRepository;
     }
 
@@ -25,7 +24,19 @@ public class CardapioService {
         Restaurante restaurante = restauranteRepository.findById(restauranteId).orElseThrow(
                 () -> new EntityNotFoundException("Restaurante não encontrado"));
         item.setRestaurante(restaurante);
-        return repository.save(item);
+        return cardapioRepository.save(item);
+    }
+
+
+    public CardapioItem buscarItemDoCardapio(Long idRestaurante, Long idItemCardapio) {
+
+        return cardapioRepository
+                .findByIdAndRestauranteId(idItemCardapio, idRestaurante);
+    }
+
+    public Page<CardapioItem> buscarTodosOsItensDoCardapio(Long idRestaurante, Pageable paginacao) {
+        return cardapioRepository.findAllByRestauranteId(idRestaurante, paginacao);
+
     }
 }
 

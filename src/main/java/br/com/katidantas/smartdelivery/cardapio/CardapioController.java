@@ -1,6 +1,10 @@
 package br.com.katidantas.smartdelivery.cardapio;
 
+import br.com.katidantas.smartdelivery.restaurante.RestauranteService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -15,10 +19,12 @@ public class CardapioController {
 
 
     private final CardapioService cardapioService;
+    private final RestauranteService restauranteService;
     static final String RESTAURANTE_ID_CARDAPIO_PATH = "/restaurantes/{restauranteId}/cardapio";
 
-    public CardapioController(CardapioService cardapioService) {
+    public CardapioController(CardapioService cardapioService, RestauranteService restauranteService) {
         this.cardapioService = cardapioService;
+        this.restauranteService = restauranteService;
     }
 
     @PostMapping()
@@ -33,5 +39,19 @@ public class CardapioController {
         return ResponseEntity.created(uri).body(new DadosDetalhamentoCardapioItemDTO(item));
     }
 
+    @GetMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    ResponseEntity<DadosDetalhamentoCardapioItemDTO> buscarCardapio(@PathVariable Long restauranteId, @PathVariable Long itemId) {
+
+        CardapioItem cardapioItem = cardapioService.buscarItemDoCardapio(restauranteId, itemId);
+
+        return ResponseEntity.ok(new DadosDetalhamentoCardapioItemDTO(cardapioItem));
+
+    }
+
+    @GetMapping(RESTAURANTE_ID_CARDAPIO_PATH)
+    ResponseEntity<Page<DadosListaItensDoCardapioDTO>> buscaTodosOsItensDoCardapio(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao, @PathVariable Long restauranteId) {
+        Page<DadosListaItensDoCardapioDTO> page = cardapioService.buscarTodosOsItensDoCardapio(restauranteId, paginacao).map(DadosListaItensDoCardapioDTO::new);
+        return ResponseEntity.ok(page);
+    }
 
 }
