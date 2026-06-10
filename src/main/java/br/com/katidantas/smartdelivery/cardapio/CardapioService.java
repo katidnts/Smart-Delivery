@@ -61,6 +61,13 @@ public class CardapioService {
         }
         return item;
     }
+
+
+    public void inativarItemDoCardapio(Long restauranteId, Long itemId) {
+        CardapioItem item = getItemDoCardapioByRestaurante(restauranteId, itemId);
+        item.setAtivo(false);
+    }
+
     private CardapioItem getItemDoCardapioByRestaurante(Long restauranteId, Long itemId) {
         return cardapioRepository.findByIdAndRestauranteId(itemId, restauranteId)
                 .orElseThrow(() -> new EntityNotFoundException(

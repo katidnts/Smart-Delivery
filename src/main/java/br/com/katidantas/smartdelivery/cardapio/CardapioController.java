@@ -61,6 +61,11 @@ public class CardapioController {
         CardapioItem itemAtualizado = cardapioService.atualizarItemDoCardapio(restauranteId, itemId, cardapioItem);
 
         return ResponseEntity.ok(new DadosDetalhamentoCardapioItemDTO(itemAtualizado));
+    }
 
+    @DeleteMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    ResponseEntity<Void> inativarItemDoCardapio(@PathVariable Long restauranteId, @PathVariable Long itemId) {
+        cardapioService.inativarItemDoCardapio(restauranteId, itemId);
+        return ResponseEntity.noContent().build();
     }
 }
