@@ -22,7 +22,7 @@ public record DadosDetalhamentoCardapioItemDTO(
                 cardapioItem.getCategoria(),
                 cardapioItem.getPreco(),
                 cardapioItem.getFotoUrl(),
-                cardapioItem.isAtivo()
+                cardapioItem.getAtivo()
         );
     }
 }

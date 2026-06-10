@@ -31,12 +31,40 @@ public class CardapioService {
     public CardapioItem buscarItemDoCardapio(Long idRestaurante, Long idItemCardapio) {
 
         return cardapioRepository
-                .findByIdAndRestauranteId(idItemCardapio, idRestaurante);
+                .findByIdAndRestauranteId(idItemCardapio, idRestaurante).orElseThrow(() -> new EntityNotFoundException(
+                        "Item com o id: %d não foi encontrado!".formatted(idItemCardapio)));
     }
 
     public Page<CardapioItem> buscarTodosOsItensDoCardapio(Long idRestaurante, Pageable paginacao) {
         return cardapioRepository.findAllByRestauranteId(idRestaurante, paginacao);
 
+    }
+
+    @Transactional
+    public CardapioItem atualizarItemDoCardapio(Long restauranteId, Long itemId, CardapioItem cardapioItemAtualizado) {
+        CardapioItem item = getItemDoCardapioByRestaurante(restauranteId, itemId);
+
+        if (cardapioItemAtualizado.getNome() != null) {
+            item.setNome(cardapioItemAtualizado.getNome());
+        }
+        if (cardapioItemAtualizado.getFotoUrl() != null) {
+            item.setFotoUrl(cardapioItemAtualizado.getFotoUrl());
+        }
+        if (cardapioItemAtualizado.getCategoria() != null) {
+            item.setCategoria(cardapioItemAtualizado.getCategoria());
+        }
+        if (cardapioItemAtualizado.getPreco() != null) {
+            item.setPreco(cardapioItemAtualizado.getPreco());
+        }
+        if (cardapioItemAtualizado.getDescricao() != null) {
+            item.setDescricao(cardapioItemAtualizado.getDescricao());
+        }
+        return item;
+    }
+    private CardapioItem getItemDoCardapioByRestaurante(Long restauranteId, Long itemId) {
+        return cardapioRepository.findByIdAndRestauranteId(itemId, restauranteId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Item com o id: %d não foi encontrado!".formatted(itemId)));
     }
 }
 

@@ -54,4 +54,13 @@ public class CardapioController {
         return ResponseEntity.ok(page);
     }
 
+    @PatchMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    ResponseEntity<DadosDetalhamentoCardapioItemDTO> atualizarItens(@PathVariable Long restauranteId, @PathVariable Long itemId, @RequestBody @Valid DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO) {
+        CardapioItem cardapioItem = dadosAtualizacaoCardapioItemDTO.toEntity();
+
+        CardapioItem itemAtualizado = cardapioService.atualizarItemDoCardapio(restauranteId, itemId, cardapioItem);
+
+        return ResponseEntity.ok(new DadosDetalhamentoCardapioItemDTO(itemAtualizado));
+
+    }
 }

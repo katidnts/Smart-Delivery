@@ -27,7 +27,7 @@ public class CardapioItem {
     private String nome;
     private String descricao;
     private BigDecimal preco;
-    private boolean ativo;
+    private Boolean ativo;
 
     @Column(name = "foto_url")
     private String fotoUrl;
