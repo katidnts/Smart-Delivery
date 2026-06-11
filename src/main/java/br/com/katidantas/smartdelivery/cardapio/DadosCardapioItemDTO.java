@@ -25,7 +25,7 @@ public record DadosCardapioItemDTO(
         cardapioItem.setDescricao(this.descricao);
         cardapioItem.setPreco(this.preco);
         cardapioItem.setFotoUrl(this.fotoUrl);
-
+        cardapioItem.setAtivo(true);
         return cardapioItem;
     }
 }

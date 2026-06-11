@@ -8,154 +8,301 @@
   },
   "item": [
     {
-      "name": "Criar restaurante",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "\t{\r\n\t    \"nome\": \"Joe joe\",\r\n\t\t\"telefone\": \"2188889991\",\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22220001\",\r\n\t\t\t\"numero\": \"21\",\r\n\t\t\t\"complemento\": \"3\"\r\n\t\t\t}\r\n\t}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/restaurantes",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "restaurantes"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Buscar restaurante",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/restaurantes/3",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "restaurantes",
-            "3"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Atualizar restaurante",
-      "request": {
-        "method": "PATCH",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n  \"telefone\": \"11111111\"\r\n\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/restaurantes/9",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "restaurantes",
-            "9"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Apagar restaurante",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/restaurantes/9",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "restaurantes",
-            "9"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Listar restaurantes com paginação",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/restaurantes?page=0&size=10&sort=nome",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "restaurantes"
-          ],
-          "query": [
-            {
-              "key": "page",
-              "value": "0"
+      "name": "Cardápio",
+      "item": [
+        {
+          "name": "Criar item do cardápio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nome\": \"Salada verde\",\r\n    \"descricao\": \"Mix de folhas\",\r\n    \"categoria\": \"SALADAS\",\r\n    \"preco\": \"45.00\",\r\n    \"fotoUrl\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            {
-              "key": "size",
-              "value": "10"
-            },
-            {
-              "key": "sort",
-              "value": "nome"
+            "url": {
+              "raw": "{{base_url}}/restaurantes/18/cardapio",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "18",
+                "cardapio"
+              ]
             }
-          ]
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar item do cardápio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/restaurantes/18/cardapio/3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "18",
+                "cardapio",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar item do cardápio",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nome\": \"Pizza salgada média\",\r\n    \"descricao\": \"Pizza salgada, 36 cm, serve 8 pedaços\",\r\n    \"preco\": 70.00\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/restaurantes/18/cardapio/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "18",
+                "cardapio",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apagar item do cardápio",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/restaurantes/18/cardapio/3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "18",
+                "cardapio",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar todos os itens do cardápio",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/restaurantes/18/cardapio?page=0&size=10&sort=nome",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "18",
+                "cardapio"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "nome"
+                }
+              ]
+            }
+          },
+          "response": []
         }
-      },
-      "response": []
+      ]
     },
     {
-      "name": "Buscar endereço por CEP",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
+      "name": "Restaurante",
+      "item": [
+        {
+          "name": "Criar restaurante",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\t{\r\n\t    \"nome\": \"Esfirra\",\r\n\t\t\"telefone\": \"2188889970\",\r\n        \"cnpj\": \"11222333000181\",\r\n\t\t\"endereco\": { \r\n\t\t    \"cep\": \"22220001\",\r\n\t\t\t\"numero\": \"20\",\r\n\t\t\t\"complemento\": \"7\"\r\n\t\t\t}\r\n\t}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/restaurantes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes"
+              ]
             }
-          }
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{base_url}}/endereco/22220001",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "endereco",
-            "22220001"
-          ]
+        {
+          "name": "Buscar restaurante",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/restaurantes/3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar restaurante",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"telefone\": \"11111111\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/restaurantes/9",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apagar restaurante",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/restaurantes/9",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar restaurantes com paginação",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/restaurantes?page=0&size=10&sort=nome",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "restaurantes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "nome"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar endereço por CEP",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/endereco/22220001",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "endereco",
+                "22220001"
+              ]
+            }
+          },
+          "response": []
         }
-      },
-      "response": []
+      ]
     }
   ]
 }

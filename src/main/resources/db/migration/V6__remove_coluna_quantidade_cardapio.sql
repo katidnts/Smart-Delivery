@@ -1,0 +1,1 @@
+ALTER TABLE itens_cardapio DROP COLUMN quantidade;
