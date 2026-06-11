@@ -40,6 +40,6 @@ public class Restaurante {
         return ativo;
     }
 
-    @OneToOne(mappedBy = "restaurante", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CardapioItem> cardapio;
 }

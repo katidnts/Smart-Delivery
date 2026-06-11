@@ -39,7 +39,7 @@ public class CardapioController {
         return ResponseEntity.created(uri).body(new DadosDetalhamentoCardapioItemDTO(item));
     }
 
-    @GetMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    @GetMapping("/{itemId}")
     ResponseEntity<DadosDetalhamentoCardapioItemDTO> buscarCardapio(@PathVariable Long restauranteId, @PathVariable Long itemId) {
 
         CardapioItem cardapioItem = cardapioService.buscarItemDoCardapio(restauranteId, itemId);
@@ -48,13 +48,13 @@ public class CardapioController {
 
     }
 
-    @GetMapping(RESTAURANTE_ID_CARDAPIO_PATH)
+    @GetMapping()
     ResponseEntity<Page<DadosListaItensDoCardapioDTO>> buscaTodosOsItensDoCardapio(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao, @PathVariable Long restauranteId) {
         Page<DadosListaItensDoCardapioDTO> page = cardapioService.buscarTodosOsItensDoCardapio(restauranteId, paginacao).map(DadosListaItensDoCardapioDTO::new);
         return ResponseEntity.ok(page);
     }
 
-    @PatchMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    @PatchMapping("/{itemId}")
     ResponseEntity<DadosDetalhamentoCardapioItemDTO> atualizarItens(@PathVariable Long restauranteId, @PathVariable Long itemId, @RequestBody @Valid DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO) {
         CardapioItem cardapioItem = dadosAtualizacaoCardapioItemDTO.toEntity();
 
@@ -63,7 +63,7 @@ public class CardapioController {
         return ResponseEntity.ok(new DadosDetalhamentoCardapioItemDTO(itemAtualizado));
     }
 
-    @DeleteMapping(RESTAURANTE_ID_CARDAPIO_PATH + "/{itemId}")
+    @DeleteMapping("/{itemId}")
     ResponseEntity<Void> inativarItemDoCardapio(@PathVariable Long restauranteId, @PathVariable Long itemId) {
         cardapioService.inativarItemDoCardapio(restauranteId, itemId);
         return ResponseEntity.noContent().build();

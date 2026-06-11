@@ -15,9 +15,8 @@ public record DadosCardapioItemDTO(
         @NotNull
         @DecimalMin(value = "0.01", message = "O preço deve ser maior que zero")
         BigDecimal preco,
-        String fotoUrl,
-        @NotNull
-        Boolean ativo) {
+        String fotoUrl
+) {
 
     public CardapioItem toEntity() {
         CardapioItem cardapioItem = new CardapioItem();
@@ -26,7 +25,7 @@ public record DadosCardapioItemDTO(
         cardapioItem.setDescricao(this.descricao);
         cardapioItem.setPreco(this.preco);
         cardapioItem.setFotoUrl(this.fotoUrl);
-        cardapioItem.setAtivo(true);
+
         return cardapioItem;
     }
 }
