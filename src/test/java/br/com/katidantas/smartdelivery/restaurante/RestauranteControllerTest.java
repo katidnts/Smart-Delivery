@@ -236,6 +236,7 @@ public class RestauranteControllerTest {
     }
 
     @Test
+    @DisplayName("Deve buscar lista de restaurantes ativos")
     void deveBuscarListaDeRestaurantesAtivos() throws Exception {
 
         // Given
