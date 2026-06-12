@@ -1,5 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
+import br.com.katidantas.smartdelivery.cardapio.CardapioItem;
 import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import org.junit.jupiter.api.AfterEach;
@@ -211,14 +212,17 @@ public class RestauranteControllerIT {
                 "Rio de Janeiro",
                 "RJ");
 
-        Restaurante restaurante = new Restaurante(
-                null,
-                "Bar da onça",
-                "999999999",
-                "11222333000181",
-                endereco,
-                true);
+        Restaurante restaurante =  new Restaurante();
+        restaurante.setId(null);
+        restaurante.setNome("Bar da onça");
+        restaurante.setCnpj("11222333000181");
+        restaurante.setTelefone("999999999");
+        restaurante.setEndereco(endereco);
+        restaurante.setAtivo(true);
+        restaurante.setCardapio(null);
+
         return restaurante;
+
     }
 
     private static DadosRestauranteDTO criaRestauranteDTO() {

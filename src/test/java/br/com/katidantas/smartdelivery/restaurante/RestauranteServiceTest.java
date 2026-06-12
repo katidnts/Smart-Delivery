@@ -45,7 +45,14 @@ public class RestauranteServiceTest {
 
         DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
-        Restaurante restaurante = new Restaurante(1L, "Casa do drink", "999999999", "11999999999", enderecoRequestDTO.toEntity(), true);
+        Restaurante restaurante = new Restaurante();
+        restaurante.setId(1L);
+        restaurante.setNome("Casa do drink");
+        restaurante.setCnpj("11999999999");
+        restaurante.setTelefone("999999999");
+        restaurante.setEndereco(enderecoRequestDTO.toEntity());
+        restaurante.setCardapio(null);
+        restaurante.setAtivo(true);
         EnderecoParcialDTO enderecoParcialDTO = new EnderecoParcialDTO(
                 "22220001",
                 "Rua do Catete",
@@ -120,7 +127,14 @@ public class RestauranteServiceTest {
 
         DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
-        Restaurante restaurante = new Restaurante(1L, "Casa do drink", "999999999", "11999999999", enderecoRequestDTO.toEntity(), true);
+        Restaurante restaurante = new Restaurante();
+        restaurante.setId(1L);
+        restaurante.setNome("Casa do drink");
+        restaurante.setCnpj("11999999999");
+        restaurante.setTelefone("999999999");
+        restaurante.setEndereco(enderecoRequestDTO.toEntity());
+        restaurante.setCardapio(null);
+        restaurante.setAtivo(true);
 
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restaurante));
 

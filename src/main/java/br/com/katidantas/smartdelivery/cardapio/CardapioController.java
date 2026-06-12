@@ -31,12 +31,12 @@ public class CardapioController {
     public ResponseEntity<DadosDetalhamentoCardapioItemDTO> criarCadastro(@PathVariable Long restauranteId, @RequestBody @Valid DadosCardapioItemDTO dadosCardapioItemDTO, UriComponentsBuilder uriComponentsBuilder) {
         CardapioItem item = dadosCardapioItemDTO.toEntity();
 
-        cardapioService.save(restauranteId, item);
+        CardapioItem itemSalvo = cardapioService.save(restauranteId, item);
         URI uri = uriComponentsBuilder.path(RESTAURANTE_ID_CARDAPIO_PATH)
-                .buildAndExpand(item.getId())
+                .buildAndExpand(itemSalvo.getId())
                 .toUri();
 
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoCardapioItemDTO(item));
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoCardapioItemDTO(itemSalvo));
     }
 
     @GetMapping("/{itemId}")
