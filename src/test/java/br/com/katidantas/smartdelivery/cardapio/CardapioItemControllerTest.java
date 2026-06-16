@@ -1,9 +1,6 @@
 package br.com.katidantas.smartdelivery.cardapio;
 
-import br.com.katidantas.smartdelivery.restaurante.DadosListaRestauranteDTO;
-import br.com.katidantas.smartdelivery.restaurante.Restaurante;
 import br.com.katidantas.smartdelivery.restaurante.RestauranteService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,13 +20,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CardapioController.class)
@@ -81,13 +76,7 @@ public class CardapioItemControllerTest {
 
         DadosDetalhamentoCardapioItemDTO dadosDetalhamentoCardapioItemDTO = objectMapper.readValue(responseBody, DadosDetalhamentoCardapioItemDTO.class);
 
-        assertThat(dadosDetalhamentoCardapioItemDTO.id()).isEqualTo(cardapioItem.getId());
-        assertThat(dadosDetalhamentoCardapioItemDTO.nome()).isEqualTo(cardapioItem.getNome());
-        assertThat(dadosDetalhamentoCardapioItemDTO.categoria()).isEqualTo(cardapioItem.getCategoria());
-        assertThat(dadosDetalhamentoCardapioItemDTO.descricao()).isEqualTo(cardapioItem.getDescricao());
-        assertThat(dadosDetalhamentoCardapioItemDTO.preco()).isEqualTo(cardapioItem.getPreco());
-        assertThat(dadosDetalhamentoCardapioItemDTO.fotoUrl()).isEqualTo(cardapioItem.getFotoUrl());
-        assertThat(dadosDetalhamentoCardapioItemDTO.ativo()).isEqualTo(cardapioItem.getAtivo());
+        assertDetalhamentoCorrespondeEntidade(dadosDetalhamentoCardapioItemDTO, cardapioItem);
 
     }
 
@@ -109,15 +98,10 @@ public class CardapioItemControllerTest {
         DadosDetalhamentoCardapioItemDTO dadosDetalhamentoCardapioItemDTO = objectMapper.readValue(responseBody, DadosDetalhamentoCardapioItemDTO.class);
 
         //Then
-        assertThat(dadosDetalhamentoCardapioItemDTO.id()).isEqualTo(cardapioItem.getId());
-        assertThat(dadosDetalhamentoCardapioItemDTO.nome()).isEqualTo(cardapioItem.getNome());
-        assertThat(dadosDetalhamentoCardapioItemDTO.descricao()).isEqualTo(cardapioItem.getDescricao());
-        assertThat(dadosDetalhamentoCardapioItemDTO.categoria()).isEqualTo(cardapioItem.getCategoria());
-        assertThat(dadosDetalhamentoCardapioItemDTO.fotoUrl()).isEqualTo(cardapioItem.getFotoUrl());
-        assertThat(dadosDetalhamentoCardapioItemDTO.ativo()).isEqualTo(cardapioItem.getAtivo());
+
+        assertDetalhamentoCorrespondeEntidade(dadosDetalhamentoCardapioItemDTO, cardapioItem);
 
         verify(cardapioService).buscarItemDoCardapio(eq(restauranteId), eq(cardapioItem.getId()));
-
 
     }
 
@@ -147,6 +131,62 @@ public class CardapioItemControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Deve atualizar itens do cardápio quando os dados forem corretos.")
+    void deveAtualizarItensDoCardapio_QuandoDadosValidos() throws Exception {
+
+        //Arrange
+        CardapioItem itemAtualizadoMock = criaCardapioItemAtualizadoMock();
+        CardapioItem item = criaCardapioItem();
+        DadosAtualizacaoCardapioItemDTO itemAtualizadoDTO = criaItemAtualizadoDTO();
+        Long restauranteId = 5L;
+
+        when(cardapioService.atualizarItemDoCardapio(eq(restauranteId), eq(item.getId()), any(CardapioItem.class))).thenReturn(itemAtualizadoMock);
+
+        //When
+        String responseBody = mockMvc.perform(patch("/restaurantes/5/cardapio/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(itemAtualizadoDTO)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
+        //Then
+        ArgumentCaptor<CardapioItem> cardapioItemArgumentCaptor = ArgumentCaptor.forClass(CardapioItem.class);
+
+        verify(cardapioService).atualizarItemDoCardapio(eq(restauranteId), eq(item.getId()), cardapioItemArgumentCaptor.capture());
+
+        assertThat(cardapioItemArgumentCaptor.getValue().getNome()).isEqualTo(itemAtualizadoDTO.nome());
+        assertThat(cardapioItemArgumentCaptor.getValue().getDescricao()).isEqualTo(itemAtualizadoDTO.descricao());
+        assertThat(cardapioItemArgumentCaptor.getValue().getCategoria()).isEqualTo(itemAtualizadoDTO.categoria());
+        assertThat(cardapioItemArgumentCaptor.getValue().getPreco()).isEqualTo(itemAtualizadoDTO.preco());
+        assertThat(cardapioItemArgumentCaptor.getValue().getFotoUrl()).isEqualTo(itemAtualizadoDTO.fotoUrl());
+
+        DadosDetalhamentoCardapioItemDTO dadosDetalhamentoCardapioItemDTO = objectMapper.readValue(responseBody, DadosDetalhamentoCardapioItemDTO.class);
+
+        assertDetalhamentoCorrespondeEntidade(dadosDetalhamentoCardapioItemDTO, itemAtualizadoMock);
+
+    }
+
+    @Test
+    @DisplayName("Deve deletar item quando id ativo")
+    void deveDeletarItem_QuandoIdAtivo() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        Long cardapioItemId = 1L;
+
+        //When
+        mockMvc.perform(delete("/restaurantes/5/cardapio/1"))
+                .andExpect(status().isNoContent());
+
+        //Then
+        verify(cardapioService).inativarItemDoCardapio(eq(restauranteId), eq(cardapioItemId));
+
+    }
+
     private static DadosCardapioItemDTO criaItemDTO() {
         DadosCardapioItemDTO itemDTO = new DadosCardapioItemDTO(
                 "Escondidinho de carne seca",
@@ -157,6 +197,29 @@ public class CardapioItemControllerTest {
 
         );
         return itemDTO;
+    }
+
+    private static DadosAtualizacaoCardapioItemDTO criaItemAtualizadoDTO() {
+        DadosAtualizacaoCardapioItemDTO itemAtualizadoDTO = new DadosAtualizacaoCardapioItemDTO(
+                null,
+                "Delicioso prato acompanhado de purê de abobóra, arroz e salada de folhas",
+                null,
+                new BigDecimal("69.90"),
+                null
+
+        );
+        return itemAtualizadoDTO;
+    }
+
+    private static CardapioItem criaCardapioItem() {
+        CardapioItem itemAtualizado = new CardapioItem();
+        itemAtualizado.setId(1L);
+        itemAtualizado.setNome("Escondidinho de carne seca");
+        itemAtualizado.setDescricao("Delicioso prato acompanhado de purê de abobóra");
+        itemAtualizado.setCategoria(CategoriaItem.PRATO_INDIVIDUAL);
+        itemAtualizado.setPreco(new BigDecimal("59.90"));
+        itemAtualizado.setFotoUrl(null);
+        return itemAtualizado;
     }
 
     private static CardapioItem criaCardapioItemMock() {
@@ -171,7 +234,19 @@ public class CardapioItemControllerTest {
         return cardapioItem;
     }
 
-    private static List<CardapioItem> criaListaDeItensMock () {
+    private static CardapioItem criaCardapioItemAtualizadoMock() {
+        CardapioItem cardapioItem = new CardapioItem();
+        cardapioItem.setId(1L);
+        cardapioItem.setNome("Escondidinho de carne seca");
+        cardapioItem.setCategoria(CategoriaItem.PRATO_INDIVIDUAL);
+        cardapioItem.setDescricao("Delicioso prato acompanhado de purê de abobóra, arroz e salada de folhas");
+        cardapioItem.setPreco(new BigDecimal("69.90"));
+        cardapioItem.setAtivo(true);
+        cardapioItem.setFotoUrl(null);
+        return cardapioItem;
+    }
+
+    private static List<CardapioItem> criaListaDeItensMock() {
         CardapioItem cardapioItem1 = new CardapioItem();
         cardapioItem1.setId(1L);
         cardapioItem1.setNome("Escondidinho de carne seca");
@@ -194,7 +269,6 @@ public class CardapioItemControllerTest {
 
     }
 
-
     private void assertDtoListaCorrespondeEntidade(DadosListaItensDoCardapioDTO dto, CardapioItem cardapioItem) {
         assertThat(dto.nome()).isEqualTo(cardapioItem.getNome());
         assertThat(dto.categoria()).isEqualTo(cardapioItem.getCategoria());
@@ -202,11 +276,30 @@ public class CardapioItemControllerTest {
         assertThat(dto.preco()).isEqualTo(cardapioItem.getPreco());
         assertThat(dto.fotoUrl()).isEqualTo(cardapioItem.getFotoUrl());
     }
+
     private void assertListaCorrespondeEntidades(List<DadosListaItensDoCardapioDTO> dtos, List<CardapioItem> itens) {
         assertThat(dtos).hasSize(itens.size());
         for (int i = 0; i < dtos.size(); i++) {
             assertDtoListaCorrespondeEntidade(dtos.get(i), itens.get(i));
         }
+    }
+
+    private void assertDetalhamentoCorrespondeEntidade(DadosDetalhamentoCardapioItemDTO dto, CardapioItem item) {
+        assertThat(dto.id()).isEqualTo(item.getId());
+        assertThat(dto.nome()).isEqualTo(item.getNome());
+        assertThat(dto.descricao()).isEqualTo(item.getDescricao());
+        assertThat(dto.categoria()).isEqualTo(item.getCategoria());
+        assertThat(dto.preco()).isEqualTo(item.getPreco());
+        assertThat(dto.fotoUrl()).isEqualTo(item.getFotoUrl());
+        assertThat(dto.ativo()).isEqualTo(item.getAtivo());
+    }
+
+    private void assertCaptorCorrespondeDTO(CardapioItem capturado, DadosCardapioItemDTO dto) {
+        assertThat(capturado.getNome()).isEqualTo(dto.nome());
+        assertThat(capturado.getDescricao()).isEqualTo(dto.descricao());
+        assertThat(capturado.getCategoria()).isEqualTo(dto.categoria());
+        assertThat(capturado.getPreco()).isEqualTo(dto.preco());
+        assertThat(capturado.getFotoUrl()).isEqualTo(dto.fotoUrl());
     }
 
 }
