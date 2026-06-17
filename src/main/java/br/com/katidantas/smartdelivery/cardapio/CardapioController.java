@@ -28,7 +28,9 @@ public class CardapioController {
     }
 
     @PostMapping()
-    public ResponseEntity<DadosDetalhamentoCardapioItemDTO> criarCadastro(@PathVariable Long restauranteId, @RequestBody @Valid DadosCardapioItemDTO dadosCardapioItemDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<DadosDetalhamentoCardapioItemDTO> criarCadastro(@PathVariable Long restauranteId,
+                                                                          @RequestBody @Valid DadosCardapioItemDTO dadosCardapioItemDTO,
+                                                                          UriComponentsBuilder uriComponentsBuilder) {
         CardapioItem item = dadosCardapioItemDTO.toEntity();
 
         CardapioItem itemSalvo = cardapioService.save(restauranteId, item);
@@ -55,7 +57,9 @@ public class CardapioController {
     }
 
     @PatchMapping("/{itemId}")
-    ResponseEntity<DadosDetalhamentoCardapioItemDTO> atualizarItens(@PathVariable Long restauranteId, @PathVariable Long itemId, @RequestBody @Valid DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO) {
+    ResponseEntity<DadosDetalhamentoCardapioItemDTO> atualizarItens(@PathVariable Long restauranteId,
+                                                                    @PathVariable Long itemId,
+                                                                    @RequestBody @Valid DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO) {
         CardapioItem cardapioItem = dadosAtualizacaoCardapioItemDTO.toEntity();
 
         CardapioItem itemAtualizado = cardapioService.atualizarItemDoCardapio(restauranteId, itemId, cardapioItem);

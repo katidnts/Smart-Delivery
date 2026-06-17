@@ -1,8 +1,10 @@
 package br.com.katidantas.smartdelivery.cardapio;
 
 import br.com.katidantas.smartdelivery.restaurante.RestauranteService;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -81,8 +83,101 @@ public class CardapioItemControllerTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 quando o nome for vazio")
+    void deveRetornarErro400_QuandoNomeVazio() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
+                null,
+                "Delicioso prato acompanhado de purê de abobóra",
+                CategoriaItem.PRATO_INDIVIDUAL,
+                new BigDecimal("59.90"),
+                null
+
+        );
+        //Then
+        mockMvc.perform(post("/restaurantes/5/cardapio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCardapioItemDTO)))
+                .andExpect(status()
+                        .isBadRequest());
+
+        verifyNoInteractions(cardapioService);
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando o preço for null")
+    void deveRetornarErro400_QuandoPrecoNull() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
+                "Escondidinho de carne seca",
+                "Delicioso prato acompanhado de purê de abobóra",
+                CategoriaItem.PRATO_INDIVIDUAL,
+                null,
+                null
+        );
+        //Then
+        mockMvc.perform(post("/restaurantes/5/cardapio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCardapioItemDTO)))
+                .andExpect(status()
+                        .isBadRequest());
+
+        verifyNoInteractions(cardapioService);
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando o preço for zero")
+    void deveRetornarErro400_QuandoPrecoZero() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
+                "Escondidinho de carne seca",
+                "Delicioso prato acompanhado de purê de abobóra",
+                CategoriaItem.PRATO_INDIVIDUAL,
+                new BigDecimal("00.00"),
+                null
+        );
+        //Then
+        mockMvc.perform(post("/restaurantes/5/cardapio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCardapioItemDTO)))
+                .andExpect(status()
+                        .isBadRequest());
+
+        verifyNoInteractions(cardapioService);
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando a categoria for nula")
+    void deveRetornarErro400_QuandoCategoriaNula() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
+                "Escondidinho de carne seca",
+                "Delicioso prato acompanhado de purê de abobóra",
+                null,
+                new BigDecimal("59.90"),
+                null
+        );
+        //Then
+        mockMvc.perform(post("/restaurantes/5/cardapio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCardapioItemDTO)))
+                .andExpect(status()
+                        .isBadRequest());
+
+        verifyNoInteractions(cardapioService);
+    }
+
+    @Test
     @DisplayName("Deve buscar item do cardápio quando id válido")
-    public void deveBuscarItemDoCardapio_QuandoIdValido() throws Exception {
+    void deveBuscarItemDoCardapio_QuandoIdValido() throws Exception {
         //Arrange
         CardapioItem cardapioItem = criaCardapioItemMock();
         Long restauranteId = 5L;
@@ -106,8 +201,26 @@ public class CardapioItemControllerTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 404 quando id não existir")
+    void deveRetornar404_QuandoIdInexistente() throws Exception {
+        //Arrange
+        Long restauranteId = 5L;
+        CardapioItem cardapioItem = criaCardapioItemMock();
+
+        when(cardapioService.buscarItemDoCardapio(eq(restauranteId), eq(3L))).thenThrow(EntityNotFoundException.class);
+
+        //When
+        mockMvc.perform(get("/restaurantes/5/cardapio/3"))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        verify(cardapioService).buscarItemDoCardapio(eq(restauranteId), eq(3L));
+    }
+
+
+    @Test
     @DisplayName("Deve buscar todos os itens ativos do cardápio")
-    public void deveBuscarTodosOsItensDoCardapio_QuandoAtivos() throws Exception {
+    void deveBuscarTodosOsItensDoCardapio_QuandoAtivos() throws Exception {
         //Arrange
         List<CardapioItem> itens = criaListaDeItensMock();
         Page<CardapioItem> paginaDeItens = new PageImpl<>(itens);
@@ -171,6 +284,28 @@ public class CardapioItemControllerTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 quando o preço inválido")
+    void deveRetornar400_QuandoPrecoInvalido() throws Exception {
+
+        //Arrange
+        DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO = new DadosAtualizacaoCardapioItemDTO(
+                null,
+                null,
+                null,
+                new BigDecimal("00.00"),
+                null
+        );
+
+        //When
+        mockMvc.perform(patch("/restaurantes/5/cardapio/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosAtualizacaoCardapioItemDTO)))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(cardapioService);
+    }
+
+    @Test
     @DisplayName("Deve deletar item quando id ativo")
     void deveDeletarItem_QuandoIdAtivo() throws Exception {
 
@@ -186,6 +321,25 @@ public class CardapioItemControllerTest {
         verify(cardapioService).inativarItemDoCardapio(eq(restauranteId), eq(cardapioItemId));
 
     }
+
+    @Test
+    @DisplayName("Deve retornar erro 404 quando id não existir")
+    void deveRetornarErro404_QuandoIdInexistente() throws Exception {
+
+        //Arrange
+        Long restauranteId = 5L;
+        Long itemId = 1L;
+        doThrow(EntityNotFoundException.class)
+                .when(cardapioService)
+                .inativarItemDoCardapio(eq(restauranteId), eq(itemId));
+
+        //When
+        mockMvc.perform(delete("/restaurantes/5/cardapio/1"))
+                .andExpect(status().isNotFound());
+
+        verify(cardapioService).inativarItemDoCardapio(eq(restauranteId), eq(itemId));
+    }
+
 
     private static DadosCardapioItemDTO criaItemDTO() {
         DadosCardapioItemDTO itemDTO = new DadosCardapioItemDTO(
