@@ -43,7 +43,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve cadastrar restaurante quando todos os dados forem válidos")
     void deveCadastrarRestaurante_quandoDadosValidos() throws Exception {
-
         // Given
         Restaurante restauranteMock = criaRestauranteMock("52", "902");
         DadosRestauranteDTO dtoValido = criaDTOCadastro();
@@ -74,7 +73,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve cadastrar restaurante quando o numero e o complemento do endereço forem vazios")
     void deveCadastrarRestaurante_quandoNumeroEComplementoForemVazios() throws Exception {
-
         // Given
         Restaurante restauranteMock = criaRestauranteMock(null, null);
         DadosRestauranteDTO dtoValido = criaDTOCadastro(null, null);
@@ -99,7 +97,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o CNPJ for inválido")
     void deveLancarErro_QuandoCadastrarRestauranteComCnpjInvalido() throws Exception {
-
         // Given
         DadosRestauranteDTO dtoInvalido = new DadosRestauranteDTO(
                 "The best coffee",
@@ -124,7 +121,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o nome for vazio")
     void deveLancarErro_QuandoCadastrarRestauranteComNomeVazio() throws Exception {
-
         // Given
         DadosRestauranteDTO dtoInvalido = new DadosRestauranteDTO(
                 "",
@@ -133,7 +129,7 @@ public class RestauranteControllerTest {
                 new DadosEnderecoRequestDTO("22220001", "52", "902")
         );
 
-        // When / Then
+        // When + Then
         mockMvc.perform(post("/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoInvalido)))
@@ -145,7 +141,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve lançar erro 400 quando o telefone for vazio")
     void deveLancarErro_QuandoCadastrarRestauranteComTelefoneInvalido() throws Exception {
-
         // Given
         DadosRestauranteDTO dtoInvalido = new DadosRestauranteDTO(
                 "The best coffee",
@@ -154,7 +149,7 @@ public class RestauranteControllerTest {
                 new DadosEnderecoRequestDTO("22220001", "52", "902")
         );
 
-        // When / Then
+        // When + Then
         mockMvc.perform(post("/restaurantes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dtoInvalido))
@@ -166,7 +161,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar erro 400 quando o cep for vazio")
     void deveLancarErro_QuandoCadastrarRestauranteComCepInvalido() throws Exception {
-
         // Given
         DadosRestauranteDTO dtoInvalido = new DadosRestauranteDTO(
                 "The best coffee",
@@ -175,7 +169,7 @@ public class RestauranteControllerTest {
                 new DadosEnderecoRequestDTO("", "23", "801")
         );
 
-        // When / Then
+        // When + Then
         mockMvc.perform(post("/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoInvalido))
@@ -188,7 +182,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve buscar restaurante quando o id for válido")
     void deveBuscarRestaurante_QuandoIdValido() throws Exception {
-
         // Given
         Restaurante restauranteMock = criaRestauranteMock();
         Long id = 1L;
@@ -212,12 +205,11 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 404 quando o restaurante não for encontrado")
     void deveLancarErro_QuandoBuscarRestauranteComIdInexistente() throws Exception {
-
         // Given
         Long id = 99L;
         when(restauranteService.buscarRestaurantePorId(id)).thenThrow(new EntityNotFoundException());
 
-        // When / Then
+        // When + Then
         mockMvc.perform(get("/restaurantes/{id}", id))
                 .andExpect(status().isNotFound());
 
@@ -228,7 +220,7 @@ public class RestauranteControllerTest {
     @DisplayName("Deve retornar 400 quando o id for inválido")
     void deveLancarErro_QuandoBuscarRestauranteComIdInvalido() throws Exception {
 
-        // When / Then
+        // When + Then
         mockMvc.perform(get("/restaurantes/{id}", "abc"))
                 .andExpect(status().isBadRequest());
 
@@ -238,7 +230,6 @@ public class RestauranteControllerTest {
     @Test
     @DisplayName("Deve buscar lista de restaurantes ativos")
     void deveBuscarListaDeRestaurantesAtivos() throws Exception {
-
         // Given
         List<Restaurante> restaurantesMock = criaListaRestauranteMock();
         Page<Restaurante> page = new PageImpl<>(restaurantesMock);
@@ -262,7 +253,6 @@ public class RestauranteControllerTest {
 
     @Test
     void deveAtualizarRestaurante() throws Exception {
-
         // Given
         Restaurante restauranteMock = criaRestauranteMock();
         DadosAtualizacaoRestauranteDTO dtoValido = criaDTOAtualizacao();
@@ -293,7 +283,6 @@ public class RestauranteControllerTest {
 
     @Test
     void deveDeletarRestauranteQuandoIdValido() throws Exception {
-
         // Given
         Restaurante restauranteMock = criaRestauranteMock();
         Long id = restauranteMock.getId();
@@ -311,11 +300,11 @@ public class RestauranteControllerTest {
         assertThat(idArgumentCaptor.getValue()).isEqualTo(id);
     }
 
-    public Restaurante criaRestauranteMock() {
+    private Restaurante criaRestauranteMock() {
         return criaRestauranteMock("52", "902");
     }
 
-    public Restaurante criaRestauranteMock(String numero, String complemento) {
+    private Restaurante criaRestauranteMock(String numero, String complemento) {
 
         Endereco endereco = new Endereco();
         endereco.setCep("22220001");

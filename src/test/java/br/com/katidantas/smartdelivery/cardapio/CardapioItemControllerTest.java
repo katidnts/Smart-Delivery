@@ -48,8 +48,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve cadastrar item do cardápio quando todos os dados forem válidos ")
     void deveCadastrarCardapioItem_QuandoDadosValidos() throws Exception {
-
-        //Arrange
+        //Given
         CardapioItem cardapioItem = criaCardapioItemMock();
         DadosCardapioItemDTO itemDTO = criaItemDTO();
         Long restauranteId = 5L;
@@ -85,8 +84,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o nome for vazio")
     void deveRetornarErro400_QuandoNomeVazio() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
                 null,
@@ -109,8 +107,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o preço for null")
     void deveRetornarErro400_QuandoPrecoNull() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
                 "Escondidinho de carne seca",
@@ -132,8 +129,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o preço for zero")
     void deveRetornarErro400_QuandoPrecoZero() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
                 "Escondidinho de carne seca",
@@ -155,8 +151,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando a categoria for nula")
     void deveRetornarErro400_QuandoCategoriaNula() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         DadosCardapioItemDTO dadosCardapioItemDTO = new DadosCardapioItemDTO(
                 "Escondidinho de carne seca",
@@ -178,7 +173,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve buscar item do cardápio quando id válido")
     void deveBuscarItemDoCardapio_QuandoIdValido() throws Exception {
-        //Arrange
+        //Given
         CardapioItem cardapioItem = criaCardapioItemMock();
         Long restauranteId = 5L;
         when(cardapioService.buscarItemDoCardapio(eq(restauranteId), eq(cardapioItem.getId()))).thenReturn(cardapioItem);
@@ -193,7 +188,6 @@ public class CardapioItemControllerTest {
         DadosDetalhamentoCardapioItemDTO dadosDetalhamentoCardapioItemDTO = objectMapper.readValue(responseBody, DadosDetalhamentoCardapioItemDTO.class);
 
         //Then
-
         assertDetalhamentoCorrespondeEntidade(dadosDetalhamentoCardapioItemDTO, cardapioItem);
 
         verify(cardapioService).buscarItemDoCardapio(eq(restauranteId), eq(cardapioItem.getId()));
@@ -203,7 +197,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 404 quando id não existir")
     void deveRetornar404_QuandoIdInexistente() throws Exception {
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         CardapioItem cardapioItem = criaCardapioItemMock();
 
@@ -221,7 +215,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve buscar todos os itens ativos do cardápio")
     void deveBuscarTodosOsItensDoCardapio_QuandoAtivos() throws Exception {
-        //Arrange
+        //Given
         List<CardapioItem> itens = criaListaDeItensMock();
         Page<CardapioItem> paginaDeItens = new PageImpl<>(itens);
         Long restauranteId = 5L;
@@ -247,8 +241,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve atualizar itens do cardápio quando os dados forem corretos.")
     void deveAtualizarItensDoCardapio_QuandoDadosValidos() throws Exception {
-
-        //Arrange
+        //Given
         CardapioItem itemAtualizadoMock = criaCardapioItemAtualizadoMock();
         CardapioItem item = criaCardapioItem();
         DadosAtualizacaoCardapioItemDTO itemAtualizadoDTO = criaItemAtualizadoDTO();
@@ -286,8 +279,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar 400 quando o preço inválido")
     void deveRetornar400_QuandoPrecoInvalido() throws Exception {
-
-        //Arrange
+        //Given
         DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO = new DadosAtualizacaoCardapioItemDTO(
                 null,
                 null,
@@ -308,8 +300,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve deletar item quando id ativo")
     void deveDeletarItem_QuandoIdAtivo() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         Long cardapioItemId = 1L;
 
@@ -325,8 +316,7 @@ public class CardapioItemControllerTest {
     @Test
     @DisplayName("Deve retornar erro 404 quando id não existir")
     void deveRetornarErro404_QuandoIdInexistente() throws Exception {
-
-        //Arrange
+        //Given
         Long restauranteId = 5L;
         Long itemId = 1L;
         doThrow(EntityNotFoundException.class)

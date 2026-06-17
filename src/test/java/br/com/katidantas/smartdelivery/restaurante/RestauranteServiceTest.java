@@ -40,9 +40,7 @@ public class RestauranteServiceTest {
     @Test
     @DisplayName("Deve salvar e retornar o restaurante quando todos os dados estiverem corretos")
     void deveSalvarRestaurante_QuandoTodosOsDadosEstiveremCorretos() {
-
         //Given
-
         DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
         Restaurante restaurante = new Restaurante();
@@ -65,32 +63,27 @@ public class RestauranteServiceTest {
         when(repository.save(any())).thenReturn(restaurante);
 
         //When
-
         Restaurante resultado = restauranteService.save(restaurante);
 
         //Then
-
         assertThat(resultado.getEndereco().getLogradouro()).isEqualTo("Rua do Catete");
         assertThat(resultado.getEndereco().getBairro()).isEqualTo("Catete");
         assertThat(resultado.getEndereco().getCidade()).isEqualTo("Rio de Janeiro");
         assertThat(resultado.getEndereco().getUf()).isEqualTo("RJ");
 
         verify(repository).save(restaurante);
-
     }
 
     @Test
     @DisplayName("Deve lançar IllegalArgumentException quando CEP nulo ou com formato inválido")
     void deveLancarIllegalArgumentException_QuandoCepNuloOuFormatoInvalido() {
-
         //Given
         Restaurante restaurante = criaRestauranteMock();
         restaurante.getEndereco().setCep("2222000");
 
         when(cepService.buscarCep("2222000")).thenThrow(new IllegalArgumentException("O CEP deve conter 8 dígitos"));
 
-        //Then
-
+        //When + Then
         assertThatThrownBy(() -> restauranteService.save(restaurante))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("O CEP deve conter 8 dígitos");
@@ -101,7 +94,6 @@ public class RestauranteServiceTest {
     @Test
     @DisplayName("Deve lançar IllegalArgumentException quando CEP não existir na API")
     void deveLancarIllegalArgumentException_QuandoCepNaoExistirNaApi() {
-
         //Given
 
         Restaurante restaurante = criaRestauranteMock();
@@ -109,22 +101,19 @@ public class RestauranteServiceTest {
 
         when(cepService.buscarCep("99999999")).thenThrow(new IllegalArgumentException("CEP inválido!"));
 
-        //Then
+        //When + Then
 
         assertThatThrownBy(() -> restauranteService.save(restaurante))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("CEP inválido!");
 
         verify(cepService).buscarCep("99999999");
-
     }
 
     @Test
     @DisplayName("Deve buscar um restaurante por ID quando o ID for válido")
     void deveBuscarRestaurante_QuandoIdValido() {
-
         //Given
-
         DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
         Restaurante restaurante = new Restaurante();
@@ -139,11 +128,9 @@ public class RestauranteServiceTest {
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restaurante));
 
         //When
-
         Restaurante resultado = restauranteService.buscarRestaurantePorId(1L);
 
         //Then
-
         assertThat(resultado.getId()).isEqualTo(restaurante.getId());
         assertThat(resultado.getNome()).isEqualTo(restaurante.getNome());
         assertThat(resultado.getTelefone()).isEqualTo(restaurante.getTelefone());
@@ -154,75 +141,60 @@ public class RestauranteServiceTest {
         assertThat(resultado.getAtivo()).isEqualTo(restaurante.getAtivo());
 
         verify(repository).findByIdAndAtivoEquals(1L, true);
-
     }
 
     @Test
     @DisplayName("Deve listar todos os restaurantes ativos")
     void deveListarRestaurantes_QuandoAtivos() {
-
         //Given
-
         List<Restaurante> restaurantes = criaListaRestauranteMock();
         Page<Restaurante> restaurantesMock = new PageImpl<>(restaurantes);
 
         when(repository.findAllByAtivoTrue(any(Pageable.class))).thenReturn(restaurantesMock);
 
         //When
-
         var resultado = restauranteService.listarRestaurantes(restaurantesMock.getPageable());
 
         //Then
-
         assertThat(resultado.getContent()).containsExactlyElementsOf(restaurantes);
         assertThat(resultado.getTotalElements()).isEqualTo(restaurantes.size());
 
         verify(repository).findAllByAtivoTrue(restaurantesMock.getPageable());
-
     }
 
     @Test
     @DisplayName("Deve atualizar os campos do restaurante quando os dados forem válidos")
     void deveAtualizarCampos_QuandoDadosValidos() {
-
         //Given
-
         Restaurante restaurante = criaRestauranteMock();
 
         when(repository.findByIdAndAtivoEquals(restaurante.getId(), true)).thenReturn(Optional.of(restaurante));
 
         //when
-
         var resultado = restauranteService.atualizarCampos(restaurante.getId(), restaurante);
 
         //Then
-
         assertThat(resultado.getNome()).isEqualTo(restaurante.getNome());
         assertThat(resultado.getTelefone()).isEqualTo(restaurante.getTelefone());
         assertThat(resultado.getCnpj()).isEqualTo(restaurante.getCnpj());
         assertThat(resultado.getEndereco()).isEqualTo(restaurante.getEndereco());
 
         verify(repository).findByIdAndAtivoEquals(restaurante.getId(), true);
-
     }
 
     @Test
     @DisplayName("Deve retornar restaurante sem alteração quando todos os campos de restauranteAtualizado são null")
     void deveRetornarRestaurante_QuandoTodosOsCamposSaoNull() {
-
         //Given
-
         Restaurante restauranteExistente = criaRestauranteMock();
         Restaurante restauranteAtualizado = new Restaurante();
 
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restauranteExistente));
 
         //When
-
         var resultado = restauranteService.atualizarCampos(1L, restauranteAtualizado);
 
         //Then
-
         assertThat(resultado.getNome()).isEqualTo(restauranteExistente.getNome());
         assertThat(resultado.getTelefone()).isEqualTo(restauranteExistente.getTelefone());
         assertThat(resultado.getEndereco()).isEqualTo(restauranteExistente.getEndereco());
@@ -233,14 +205,12 @@ public class RestauranteServiceTest {
     @Test
     @DisplayName("Deve lançar EntityNotFoundException ao tentar atualizar restaurante com ID não encontrado")
     void deveLancarEntityNotFoundException_AoAtualizarRestauranteComIdNaoEncontrado() {
-
         //Given
         Restaurante restaurante = criaRestauranteMock();
 
         when(repository.findByIdAndAtivoEquals(2L, true)).thenReturn(Optional.empty());
 
         //Then
-
         assertThatThrownBy(() -> restauranteService.atualizarCampos(2L, restaurante))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("O Restaurante com o id informado: 2 não existe!");
@@ -251,7 +221,6 @@ public class RestauranteServiceTest {
     @Test
     @DisplayName("Deve lançar EntityNotFoundException ao tentar atualizar restaurante inativo")
     void deveLancarEntityNotFoundException_AoAtualizarRestauranteInativo() {
-
         //Given
         Restaurante restaurante = criaRestauranteMock();
         restaurante.setAtivo(false);
@@ -259,7 +228,6 @@ public class RestauranteServiceTest {
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.empty());
 
         //Then
-
         assertThatThrownBy(() -> restauranteService.atualizarCampos(1L, restaurante))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("O Restaurante com o id informado: 1 não existe!");
@@ -270,20 +238,16 @@ public class RestauranteServiceTest {
     @Test
     @DisplayName("Deve inativar restaurante quando ativo")
     void deveInativarRestaurante_QuandoAtivo() {
-
         //Given
-
         Restaurante restaurante = criaRestauranteMock();
 
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restaurante));
         when(repository.save(restaurante)).thenReturn(restaurante);
 
         //When
-
         var resultado = restauranteService.inativar(1L);
 
         //Then
-
         assertThat(resultado.getNome()).isEqualTo(restaurante.getNome());
         assertThat(resultado.getCnpj()).isEqualTo(restaurante.getCnpj());
         assertThat(resultado.getTelefone()).isEqualTo(restaurante.getTelefone());
@@ -292,10 +256,9 @@ public class RestauranteServiceTest {
 
         verify(repository).findByIdAndAtivoEquals(1L, true);
         verify(repository).save(restaurante);
-
     }
 
-    private static DadosEnderecoRequestDTO criaDadosEnderecoRequestDTOMock() {
+    private DadosEnderecoRequestDTO criaDadosEnderecoRequestDTOMock() {
         return new DadosEnderecoRequestDTO(
                 "22220001",
                 "123",

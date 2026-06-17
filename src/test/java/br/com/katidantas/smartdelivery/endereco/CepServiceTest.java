@@ -38,7 +38,6 @@ public class CepServiceTest {
     void deveRetornarUmEndereco_QuandoCepValido() {
 
         //Given
-
         CepResponseDTO cepResponseDTO = new CepResponseDTO(
                 "22220001",
                 "Rua do Catete",
@@ -61,11 +60,9 @@ public class CepServiceTest {
         when(responseSpec.body(CepResponseDTO.class)).thenReturn(cepResponseDTO);
 
         //When
-
         var resultado = cepService.buscarCep("22220001");
 
         //Then
-
         assertThat(resultado.cep()).isEqualTo(enderecoParcialDTO.cep());
         assertThat(resultado.logradouro()).isEqualTo(enderecoParcialDTO.logradouro());
         assertThat(resultado.bairro()).isEqualTo(enderecoParcialDTO.bairro());
@@ -79,11 +76,9 @@ public class CepServiceTest {
     void deveLancarIllegalArgumentException_QuandoCepForNuloOuFormatoInvalido() {
 
         //Given
-
         String cep = "222200";
 
         //Then
-
         assertThatThrownBy(() -> cepService.buscarCep(cep))
                 .isInstanceOf(CepInvalidoException.class)
                 .hasMessage("CEP deve conter 8 dígitos");
@@ -95,7 +90,6 @@ public class CepServiceTest {
     void deveLancarIllegalArgumentException_QuandoCepNaoExistirNaApi() {
 
         //Given
-
         String cep = "99999999";
 
         when(restClient.get()).thenReturn(requestHeadersUriSpec);
@@ -105,7 +99,6 @@ public class CepServiceTest {
 
 
         //Then
-
         assertThatThrownBy(() -> cepService.buscarCep(cep))
                 .isInstanceOf(CepInvalidoException.class)
                 .hasMessage("CEP inválido!");

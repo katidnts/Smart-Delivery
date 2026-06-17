@@ -1,6 +1,5 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.cardapio.CardapioItem;
 import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import org.junit.jupiter.api.AfterEach;
@@ -43,13 +42,12 @@ public class RestauranteControllerIT {
 
     @Test
     void deveBuscarRestaurantePorId() {
-
-        //Arrange
+        //Given
         Restaurante restaurante = criaRestaurante();
 
         restauranteRepository.save(restaurante);
 
-        //Act
+        //When
         ResponseEntity<DadosDetalhamentoRestauranteDTO> dadosDetalhamentoRestauranteDTOResponse = restClient.get()
                 .uri("/restaurantes/" + restaurante.getId())
                 .retrieve()
@@ -58,8 +56,7 @@ public class RestauranteControllerIT {
         DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTO = dadosDetalhamentoRestauranteDTOResponse.getBody();
         int statusCode = dadosDetalhamentoRestauranteDTOResponse.getStatusCode().value();
 
-
-        //Assert
+        //Then
         assertThat(statusCode).isEqualTo(200);
         assertThat(dadosDetalhamentoRestauranteDTO).isNotNull();
         assertThat(dadosDetalhamentoRestauranteDTO.id()).isEqualTo(restaurante.getId());
@@ -75,14 +72,12 @@ public class RestauranteControllerIT {
 
     }
 
-
     @Test
     void deveCriarRestaurante() {
-
-        //Arrange
+        //Given
         DadosRestauranteDTO restaurante = criaRestauranteDTO();
 
-        //Act
+        //When
         ResponseEntity<DadosDetalhamentoRestauranteDTO> response = restClient.post()
                 .uri("/restaurantes")
                 .body(restaurante)
@@ -92,7 +87,7 @@ public class RestauranteControllerIT {
         DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTO = response.getBody();
         int statusCode = response.getStatusCode().value();
 
-        //Assert
+        //Then
         assertThat(statusCode).isEqualTo(201);
         assertThat(dadosDetalhamentoRestauranteDTO).isNotNull();
         assertThat(dadosDetalhamentoRestauranteDTO.nome()).isEqualTo(restaurante.nome());
@@ -105,10 +100,10 @@ public class RestauranteControllerIT {
 
     @Test
     void deveCriarUmRestauranteSemNumeroEComplemento() {
-        //Arrange
+        //Given
         DadosRestauranteDTO restaurante = criaRestauranteDTO(null, null);
 
-        //Act
+        //When
         ResponseEntity<DadosDetalhamentoRestauranteDTO> response = restClient.post()
                 .uri("/restaurantes")
                 .body(restaurante)
@@ -118,7 +113,7 @@ public class RestauranteControllerIT {
         DadosDetalhamentoRestauranteDTO dadosDetalhamentoRestauranteDTO = response.getBody();
         int statusCode = response.getStatusCode().value();
 
-        //Assert
+        //Then
         assertThat(statusCode).isEqualTo(201);
         assertThat(dadosDetalhamentoRestauranteDTO).isNotNull();
         assertThat(dadosDetalhamentoRestauranteDTO.nome()).isEqualTo(restaurante.nome());
@@ -131,12 +126,11 @@ public class RestauranteControllerIT {
 
     @Test
     void deveBuscarUmaListaComRestaAtivos() {
-
-        //Arrange
+        //Given
         List<Restaurante> restaurantes = criaListaRestaurante();
         restauranteRepository.saveAll(restaurantes);
 
-        //Act
+        //When
         ResponseEntity<PageResponse<DadosListaRestauranteDTO>> restaurantesAtivos = restClient.get()
                 .uri("/restaurantes")
                 .retrieve().toEntity(new ParameterizedTypeReference<PageResponse<DadosListaRestauranteDTO>>() {
@@ -144,7 +138,7 @@ public class RestauranteControllerIT {
 
         List<DadosListaRestauranteDTO> responseDeRestaurantes = restaurantesAtivos.getBody().content();
 
-        //Assert
+        //Then
         assertThat(restaurantesAtivos.getStatusCode().value()).isEqualTo(200);
         assertThat(responseDeRestaurantes).hasSize(restaurantes.size());
         for (int i = 0; i < restaurantes.size(); i++) {
@@ -154,8 +148,7 @@ public class RestauranteControllerIT {
 
     @Test
     void deveAtualizarRestaurante() {
-
-        //Arrange
+        //Given
         Restaurante restaurante = criaRestaurante();
         restauranteRepository.save(restaurante);
         Long id = restaurante.getId();
@@ -167,14 +160,14 @@ public class RestauranteControllerIT {
                 null
         );
 
-        //Act
+        //When
         ResponseEntity<DadosDetalhamentoRestauranteDTO> restauranteAtualizado = restClient.patch()
                 .uri("/restaurantes/{id}", id)
                 .body(dadosRestaurante)
                 .retrieve()
                 .toEntity(DadosDetalhamentoRestauranteDTO.class);
 
-        //Assert
+        //Then
         assertThat(restauranteAtualizado.getStatusCode().value()).isEqualTo(200);
 
         assertThat(dadosRestaurante.id()).isEqualTo(restauranteAtualizado.getBody().id());
@@ -184,19 +177,18 @@ public class RestauranteControllerIT {
 
     @Test
     void deveDeletarRestauranteQuandoIdValido() {
-
-        //Arrange
+        //Given
         Restaurante restaurante = criaRestaurante();
         restauranteRepository.save(restaurante);
         Long id = restaurante.getId();
 
-        //Act
+        //When
         ResponseEntity<Void> response = restClient.delete()
                 .uri("/restaurantes/{id}", id)
                 .retrieve()
                 .toBodilessEntity();
 
-        //Assert
+        //Then
         assertThat(response.getStatusCode().value()).isEqualTo(204);
         Optional<Restaurante> restauranteInativo = restauranteRepository.findById(id);
         assertThat(restauranteInativo.orElseThrow().getAtivo()).isFalse();
