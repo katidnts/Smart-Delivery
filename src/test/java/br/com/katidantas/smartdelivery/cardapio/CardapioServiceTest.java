@@ -62,7 +62,6 @@ public class CardapioServiceTest {
         assertThat(itemCapturado.getDescricao()).isEqualTo(cardapioItem.getDescricao());
         assertThat(itemCapturado.getPreco()).isEqualTo(cardapioItem.getPreco());
         assertThat(itemCapturado.getAtivo()).isEqualTo(cardapioItem.getAtivo());
-
     }
 
     @Test
@@ -77,6 +76,7 @@ public class CardapioServiceTest {
         assertThatThrownBy(() -> cardapioService.save(restauranteId, cardapioItem))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("Restaurante não encontrado");
+
         verifyNoInteractions(cardapioRepository);
     }
 
@@ -86,17 +86,13 @@ public class CardapioServiceTest {
         //Given
         Long restauranteId = 5L;
         CardapioItem cardapioItem = criaCardapioItemMock();
-
         when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.of(cardapioItem));
 
         //When
-
         CardapioItem itemEncontrado = cardapioService.buscarItemDoCardapio(restauranteId, cardapioItem.getId());
 
         //Then
-
         assertThat(itemEncontrado.getNome()).isEqualTo(cardapioItem.getNome());
-
         verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
     }
 
@@ -109,7 +105,7 @@ public class CardapioServiceTest {
 
         when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.empty());
 
-        //
+        //When + Then
         assertThatThrownBy(() -> cardapioService.buscarItemDoCardapio(restauranteId, cardapioItem.getId()))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("Item com o id: %d não foi encontrado!".formatted(cardapioItem.getId()));
@@ -135,8 +131,109 @@ public class CardapioServiceTest {
         verify(cardapioRepository).findAllByRestauranteIdAndAtivoTrue(eq(restauranteId), any(Pageable.class));
     }
 
+    @Test
+    @DisplayName("Deve atualizar todos os campos quando todos forem fornecidos")
+    void deveAtualizarTodosOsCampos_QuandoTodosForemFornecidos() {
+        //Given
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        CardapioItem itemDadosAtualizados = criaCardapioItemAtualizadoMock();
+        Long restauranteId = 5L;
+        when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.of(cardapioItem));
+
+        //When
+        CardapioItem itemAtualizado = cardapioService.atualizarItemDoCardapio(restauranteId, cardapioItem.getId(), itemDadosAtualizados);
+
+        //Then
+        assertThat(itemAtualizado.getId()).isEqualTo(cardapioItem.getId());
+        assertThat(itemAtualizado.getNome()).isEqualTo(itemDadosAtualizados.getNome());
+        assertThat(itemAtualizado.getDescricao()).isEqualTo(itemDadosAtualizados.getDescricao());
+        assertThat(itemAtualizado.getCategoria()).isEqualTo(itemDadosAtualizados.getCategoria());
+        assertThat(itemAtualizado.getPreco()).isEqualTo(itemDadosAtualizados.getPreco());
+
+        assertThat(itemAtualizado.getFotoUrl()).isEqualTo(itemDadosAtualizados.getFotoUrl());
+
+        verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
+        verify(cardapioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve manter campos originais quando atualização parcial tiver campos nulos")
+    void deveManterCamposOriginais_QuandoAtualizacaoForParcial() {
+        //Given
+        Long restauranteId = 5L;
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        CardapioItem itemDadosAtualizados = new CardapioItem();
+        itemDadosAtualizados.setPreco(new BigDecimal("109.00"));
+        itemDadosAtualizados.setFotoUrl("foto-atualizada.jpg");
+        when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.of(cardapioItem));
+
+        //When
+        CardapioItem itemAtualizado = cardapioService.atualizarItemDoCardapio(restauranteId, cardapioItem.getId(), itemDadosAtualizados);
+
+        //Then
+        assertThat(itemAtualizado.getId()).isEqualTo(cardapioItem.getId());
+        assertThat(itemAtualizado.getNome()).isEqualTo(cardapioItem.getNome());
+        assertThat(itemAtualizado.getCategoria()).isEqualTo(cardapioItem.getCategoria());
+        assertThat(itemAtualizado.getDescricao()).isEqualTo(cardapioItem.getDescricao());
+        assertThat(itemAtualizado.getFotoUrl()).isEqualTo(itemDadosAtualizados.getFotoUrl());
+        assertThat(itemAtualizado.getPreco()).isEqualTo(itemDadosAtualizados.getPreco());
+        verify(cardapioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityNotFound quando id do item inválido")
+    void deveLancarEntityNotFoundException_QuandoIdInvalido() {
+        //Given
+        Long restauranteId = 5L;
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        CardapioItem dadosItemAtualizado = new CardapioItem();
+        dadosItemAtualizado.setPreco(new BigDecimal("119.00"));
+
+        when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.empty());
+
+        //When + Then
+        assertThatThrownBy(() -> cardapioService.atualizarItemDoCardapio(restauranteId, cardapioItem.getId(), dadosItemAtualizado))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Item com o id: %d não foi encontrado!".formatted(cardapioItem.getId()));
+
+        verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
+    }
+
+    @Test
+    @DisplayName("Deve inativar item quando id válido")
+    void deveInativarItem_QuandoIdValido() {
+        //Given
+        Long restauranteId = 5L;
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.of(cardapioItem));
+
+        //When
+        cardapioService.inativarItemDoCardapio(restauranteId, cardapioItem.getId());
+
+        //Then
+        assertThat(cardapioItem.getAtivo()).isFalse();
+        verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
+        verify(cardapioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityNotFound quando id do iten inválido")
+    void deveLancarErroEntityNotFoundException_QuandoItemIdInvalido() {
+        //Given
+        Long restauranteId = 5L;
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        when(cardapioRepository.findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId))).thenReturn(Optional.empty());
+
+        //When + Then
+        assertThatThrownBy(() -> cardapioService.inativarItemDoCardapio(restauranteId, cardapioItem.getId()))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Item com o id: %d não foi encontrado!".formatted(cardapioItem.getId()));
+
+        verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
+    }
 
     private static CardapioItem criaCardapioItemMock() {
+
         CardapioItem cardapioItem = new CardapioItem();
         cardapioItem.setId(1L);
         cardapioItem.setNome("Escondidinho de carne seca");
@@ -145,6 +242,19 @@ public class CardapioServiceTest {
         cardapioItem.setPreco(new BigDecimal("59.90"));
         cardapioItem.setAtivo(true);
         cardapioItem.setFotoUrl(null);
+        return cardapioItem;
+    }
+
+    private static CardapioItem criaCardapioItemAtualizadoMock() {
+
+        CardapioItem cardapioItem = new CardapioItem();
+        cardapioItem.setId(1L);
+        cardapioItem.setNome("Empadão de carne");
+        cardapioItem.setCategoria(CategoriaItem.PRATO_PARA_DOIS);
+        cardapioItem.setDescricao("Acompanha salada de folhas");
+        cardapioItem.setPreco(new BigDecimal("129.90"));
+        cardapioItem.setAtivo(true);
+        cardapioItem.setFotoUrl("foto-empadao.jpg");
         return cardapioItem;
     }
 
@@ -168,10 +278,10 @@ public class CardapioServiceTest {
         entidade.setAtivo(true);
 
         return entidade;
-
     }
 
     private static List<CardapioItem> criaListaDeItensMock() {
+
         CardapioItem cardapioItem1 = new CardapioItem();
         cardapioItem1.setId(1L);
         cardapioItem1.setNome("Escondidinho de carne seca");
@@ -191,6 +301,5 @@ public class CardapioServiceTest {
         cardapioItem2.setFotoUrl(null);
 
         return List.of(cardapioItem1, cardapioItem2);
-
     }
 }
