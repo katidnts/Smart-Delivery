@@ -11,8 +11,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,6 +117,25 @@ public class CardapioServiceTest {
         verify(cardapioRepository).findByIdAndRestauranteId(eq(cardapioItem.getId()), eq(restauranteId));
     }
 
+    @Test
+    @DisplayName("Deve retornar um page de itens ativos")
+    void deveRetornarPageDeItens_QuandoAtivos() {
+        //Given
+        List<CardapioItem> listaItens = criaListaDeItensMock();
+        Page<CardapioItem> pageItens = new PageImpl<>(listaItens);
+        Long restauranteId = 5L;
+        when(cardapioRepository.findAllByRestauranteIdAndAtivoTrue(eq(restauranteId), any(Pageable.class))).thenReturn(pageItens);
+
+        //When
+        Page<CardapioItem> cardapioItens = cardapioService.buscarTodosOsItensDoCardapio(restauranteId, pageItens.getPageable());
+
+        //Then
+        assertThat(cardapioItens.getContent()).containsExactlyElementsOf(listaItens);
+        assertThat(cardapioItens.getTotalElements()).isEqualTo(listaItens.size());
+        verify(cardapioRepository).findAllByRestauranteIdAndAtivoTrue(eq(restauranteId), any(Pageable.class));
+    }
+
+
     private static CardapioItem criaCardapioItemMock() {
         CardapioItem cardapioItem = new CardapioItem();
         cardapioItem.setId(1L);
@@ -145,6 +168,29 @@ public class CardapioServiceTest {
         entidade.setAtivo(true);
 
         return entidade;
+
+    }
+
+    private static List<CardapioItem> criaListaDeItensMock() {
+        CardapioItem cardapioItem1 = new CardapioItem();
+        cardapioItem1.setId(1L);
+        cardapioItem1.setNome("Escondidinho de carne seca");
+        cardapioItem1.setCategoria(CategoriaItem.PRATO_INDIVIDUAL);
+        cardapioItem1.setDescricao("Delicioso prato acompanhado de purê de abobóra");
+        cardapioItem1.setPreco(new BigDecimal("59.90"));
+        cardapioItem1.setAtivo(true);
+        cardapioItem1.setFotoUrl(null);
+
+        CardapioItem cardapioItem2 = new CardapioItem();
+        cardapioItem2.setId(2L);
+        cardapioItem2.setNome("Picanha para dois");
+        cardapioItem2.setCategoria(CategoriaItem.PRATO_PARA_DOIS);
+        cardapioItem2.setDescricao("Picanha na brasa com acompanhamentos à escolha");
+        cardapioItem2.setPreco(new BigDecimal("150.00"));
+        cardapioItem2.setAtivo(true);
+        cardapioItem2.setFotoUrl(null);
+
+        return List.of(cardapioItem1, cardapioItem2);
 
     }
 }

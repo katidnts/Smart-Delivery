@@ -10,7 +10,7 @@ public interface CardapioRepository extends JpaRepository<CardapioItem, Long> {
 
     Optional<CardapioItem> findByIdAndRestauranteId(Long id, Long IdRestaurante);
 
-    Page<CardapioItem> findAllByRestauranteId(Long idRestaurante, Pageable paginacao);
+    Page<CardapioItem> findAllByRestauranteIdAndAtivoTrue(Long idRestaurante, Pageable paginacao);
 
     Optional<CardapioItem> findByIdAndAtivo(Long itemId, boolean ativo);
 }

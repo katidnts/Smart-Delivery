@@ -36,7 +36,7 @@ public class CardapioService {
     }
 
     public Page<CardapioItem> buscarTodosOsItensDoCardapio(Long idRestaurante, Pageable paginacao) {
-        return cardapioRepository.findAllByRestauranteId(idRestaurante, paginacao);
+        return cardapioRepository.findAllByRestauranteIdAndAtivoTrue(idRestaurante, paginacao);
 
     }
 

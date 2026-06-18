@@ -438,12 +438,4 @@ public class CardapioItemControllerTest {
         assertThat(dto.ativo()).isEqualTo(item.getAtivo());
     }
 
-    private void assertCaptorCorrespondeDTO(CardapioItem capturado, DadosCardapioItemDTO dto) {
-        assertThat(capturado.getNome()).isEqualTo(dto.nome());
-        assertThat(capturado.getDescricao()).isEqualTo(dto.descricao());
-        assertThat(capturado.getCategoria()).isEqualTo(dto.categoria());
-        assertThat(capturado.getPreco()).isEqualTo(dto.preco());
-        assertThat(capturado.getFotoUrl()).isEqualTo(dto.fotoUrl());
-    }
-
 }
