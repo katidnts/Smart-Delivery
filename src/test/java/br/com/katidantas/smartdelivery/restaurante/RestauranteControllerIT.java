@@ -126,7 +126,7 @@ public class RestauranteControllerIT {
     }
 
     @Test
-    void deveBuscarUmaListaComRestaAtivos() {
+    void deveBuscarUmaListaComRestaurantesAtivos() {
         //Given
         List<Restaurante> restaurantes = criaListaRestaurante();
         restauranteRepository.saveAll(restaurantes);
@@ -177,7 +177,7 @@ public class RestauranteControllerIT {
     }
 
     @Test
-    void deveDeletarRestauranteQuandoIdValido() {
+    void deveDeletarRestaurante() {
         //Given
         Restaurante restaurante = criaRestaurante();
         restauranteRepository.save(restaurante);

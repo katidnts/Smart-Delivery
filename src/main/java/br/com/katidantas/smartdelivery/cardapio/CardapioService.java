@@ -61,6 +61,7 @@ public class CardapioService {
         return item;
     }
 
+    @Transactional
     public void inativarItemDoCardapio(Long restauranteId, Long itemId) {
         CardapioItem item = getItemDoCardapioByRestaurante(restauranteId, itemId);
         item.setAtivo(false);

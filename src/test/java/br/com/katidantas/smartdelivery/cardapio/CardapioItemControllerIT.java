@@ -1,6 +1,7 @@
 package br.com.katidantas.smartdelivery.cardapio;
 
 import br.com.katidantas.smartdelivery.endereco.Endereco;
+import br.com.katidantas.smartdelivery.restaurante.PageResponse;
 import br.com.katidantas.smartdelivery.restaurante.Restaurante;
 import br.com.katidantas.smartdelivery.restaurante.RestauranteRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -9,11 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,7 +105,84 @@ public class CardapioItemControllerIT {
 
     }
 
-    private CardapioItem criaCardapioItemMock() {
+    @Test
+    void deveBuscarListaDeItensAtivos() {
+        //Given
+        List<CardapioItem> itens = criaListaDeItensMock();
+        itens.forEach(item -> item.setRestaurante(restaurante));
+        cardapioRepository.saveAll(itens);
+
+        //When
+        ResponseEntity<PageResponse<DadosListaItensDoCardapioDTO>> dadosItensAtivos = restClient.get()
+                .uri("/restaurantes/{restauranteId}/cardapio", restaurante.getId())
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<PageResponse<DadosListaItensDoCardapioDTO>>() {
+                });
+
+        List<DadosListaItensDoCardapioDTO> itensResponse = dadosItensAtivos.getBody().content();
+
+        //Then
+        assertThat(dadosItensAtivos.getStatusCode().value()).isEqualTo(200);
+        assertThat(itensResponse)
+                .extracting(DadosListaItensDoCardapioDTO::nome)
+                .containsExactlyInAnyOrderElementsOf(
+                        itens.stream().filter(CardapioItem::getAtivo).map(CardapioItem::getNome).toList()
+                );
+
+    }
+
+    @Test
+    void deveAtualizarCardapioItem() {
+        //Given
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        cardapioItem.setRestaurante(restaurante);
+        cardapioRepository.save(cardapioItem);
+
+        DadosAtualizacaoCardapioItemDTO dadosAtualizacaoCardapioItemDTO = new DadosAtualizacaoCardapioItemDTO(
+                "Novo nome",
+                "Nova descrição",
+                null,
+                null,
+                "foto-atualizada.jpg"
+        );
+
+        //When
+        ResponseEntity<DadosDetalhamentoCardapioItemDTO> dadosCardapioItemDTOAtualizadoResponse = restClient.patch()
+                .uri("/restaurantes/{restauranteId}/cardapio/{cardapioItemId}", restaurante.getId(), cardapioItem.getId())
+                .body(dadosAtualizacaoCardapioItemDTO)
+                .retrieve()
+                .toEntity(DadosDetalhamentoCardapioItemDTO.class);
+
+        //Then
+        assertThat(dadosCardapioItemDTOAtualizadoResponse.getStatusCode().value()).isEqualTo(200);
+
+        assertThat(dadosAtualizacaoCardapioItemDTO.nome()).isEqualTo(dadosCardapioItemDTOAtualizadoResponse.getBody().nome());
+        assertThat(dadosAtualizacaoCardapioItemDTO.descricao()).isEqualTo(dadosCardapioItemDTOAtualizadoResponse.getBody().descricao());
+        assertThat(dadosAtualizacaoCardapioItemDTO.fotoUrl()).isEqualTo(dadosCardapioItemDTOAtualizadoResponse.getBody().fotoUrl());
+        assertThat(dadosCardapioItemDTOAtualizadoResponse.getBody().categoria()).isEqualTo(cardapioItem.getCategoria());
+        assertThat(dadosCardapioItemDTOAtualizadoResponse.getBody().preco()).isEqualTo(cardapioItem.getPreco());
+    }
+
+    @Test
+    void deveInativarItemDoCardapio() {
+        //Given
+        CardapioItem cardapioItem = criaCardapioItemMock();
+        cardapioItem.setRestaurante(restaurante);
+        cardapioRepository.save(cardapioItem);
+
+        //When
+        ResponseEntity<Void> response = restClient.delete()
+                .uri("/restaurantes/{restauranteId}/cardapio/{cardapioItemId}", restaurante.getId(), cardapioItem.getId())
+                .retrieve()
+                .toBodilessEntity();
+
+        //Then
+        assertThat(response.getStatusCode().value()).isEqualTo(204);
+        Optional<CardapioItem> itemInativo = cardapioRepository.findByIdAndRestauranteId(cardapioItem.getId(), restaurante.getId());
+        assertThat(itemInativo.orElseThrow().getAtivo()).isFalse();
+    }
+
+    private static CardapioItem criaCardapioItemMock() {
         CardapioItem cardapioItem = new CardapioItem();
         cardapioItem.setNome("Escondidinho de carne seca");
         cardapioItem.setCategoria(CategoriaItem.PRATO_INDIVIDUAL);
@@ -112,7 +193,7 @@ public class CardapioItemControllerIT {
         return cardapioItem;
     }
 
-    private DadosCardapioItemDTO criaCardapioDTO() {
+    private static DadosCardapioItemDTO criaCardapioDTO() {
         return new DadosCardapioItemDTO(
                 "Escondidinho de carne seca",
                 "Delicioso prato acompanhado de purê de abobóra",
@@ -143,5 +224,26 @@ public class CardapioItemControllerIT {
 
         return restaurante;
 
+    }
+
+    private static List<CardapioItem> criaListaDeItensMock() {
+
+        CardapioItem cardapioItem1 = new CardapioItem();
+        cardapioItem1.setNome("Escondidinho de carne seca");
+        cardapioItem1.setCategoria(CategoriaItem.PRATO_INDIVIDUAL);
+        cardapioItem1.setDescricao("Delicioso prato acompanhado de purê de abobóra");
+        cardapioItem1.setPreco(new BigDecimal("59.90"));
+        cardapioItem1.setAtivo(false);
+        cardapioItem1.setFotoUrl(null);
+
+        CardapioItem cardapioItem2 = new CardapioItem();
+        cardapioItem2.setNome("Picanha para dois");
+        cardapioItem2.setCategoria(CategoriaItem.PRATO_PARA_DOIS);
+        cardapioItem2.setDescricao("Picanha na brasa com acompanhamentos à escolha");
+        cardapioItem2.setPreco(new BigDecimal("150.00"));
+        cardapioItem2.setAtivo(true);
+        cardapioItem2.setFotoUrl(null);
+
+        return List.of(cardapioItem1, cardapioItem2);
     }
 }
