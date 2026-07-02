@@ -28,6 +28,7 @@ public class RestauranteControllerIT {
 
     @LocalServerPort
     private int port;
+
     private RestClient restClient;
 
     @BeforeEach

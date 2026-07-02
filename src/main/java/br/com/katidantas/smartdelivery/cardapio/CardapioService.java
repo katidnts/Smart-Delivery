@@ -27,7 +27,6 @@ public class CardapioService {
         return cardapioRepository.save(item);
     }
 
-
     public CardapioItem buscarItemDoCardapio(Long idRestaurante, Long idItemCardapio) {
 
         return cardapioRepository
@@ -61,7 +60,6 @@ public class CardapioService {
         }
         return item;
     }
-
 
     public void inativarItemDoCardapio(Long restauranteId, Long itemId) {
         CardapioItem item = getItemDoCardapioByRestaurante(restauranteId, itemId);
