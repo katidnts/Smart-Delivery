@@ -1,6 +1,6 @@
 package br.com.katidantas.smartdelivery.endereco;
 
-public record DadosEnderecoResponseDTO(
+public record DadosDetalhamentoEnderecoDTO(
 
         String cep,
         String logradouro,
@@ -11,11 +11,11 @@ public record DadosEnderecoResponseDTO(
         String uf
 
 ) {
-    public static DadosEnderecoResponseDTO fromEntity(Endereco endereco) {
+    public static DadosDetalhamentoEnderecoDTO fromEntity(Endereco endereco) {
         if (endereco == null) {
             return null;
         }
-        DadosEnderecoResponseDTO dadosEndereco = new DadosEnderecoResponseDTO(
+        DadosDetalhamentoEnderecoDTO dadosEndereco = new DadosDetalhamentoEnderecoDTO(
                 endereco.getCep(),
                 endereco.getLogradouro(),
                 endereco.getNumero(),

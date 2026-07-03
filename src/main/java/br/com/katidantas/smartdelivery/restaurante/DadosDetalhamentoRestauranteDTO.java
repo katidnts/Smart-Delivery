@@ -1,13 +1,13 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoResponseDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosDetalhamentoEnderecoDTO;
 
 public record DadosDetalhamentoRestauranteDTO(
         Long id,
         String nome,
         String telefone,
         String cnpj,
-        DadosEnderecoResponseDTO endereco
+        DadosDetalhamentoEnderecoDTO endereco
 ) {
     public DadosDetalhamentoRestauranteDTO(Restaurante restaurante) {
         this(
@@ -15,7 +15,7 @@ public record DadosDetalhamentoRestauranteDTO(
                 restaurante.getNome(),
                 restaurante.getTelefone(),
                 restaurante.getCnpj(),
-                DadosEnderecoResponseDTO.fromEntity(restaurante.getEndereco())
+                DadosDetalhamentoEnderecoDTO.fromEntity(restaurante.getEndereco())
         );
     }
 }

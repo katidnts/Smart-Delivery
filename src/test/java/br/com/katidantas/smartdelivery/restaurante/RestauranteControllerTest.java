@@ -1,6 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -102,7 +102,7 @@ public class RestauranteControllerTest {
                 "The best coffee",
                 "999999999",
                 "00000000000000",
-                new DadosEnderecoRequestDTO(
+                new DadosEnderecoDTO(
                         "22220001",
                         "52",
                         "902")
@@ -126,7 +126,7 @@ public class RestauranteControllerTest {
                 "",
                 "999999999",
                 "11222333000181",
-                new DadosEnderecoRequestDTO("22220001", "52", "902")
+                new DadosEnderecoDTO("22220001", "52", "902")
         );
 
         // When + Then
@@ -146,7 +146,7 @@ public class RestauranteControllerTest {
                 "The best coffee",
                 "",
                 "11222333000181",
-                new DadosEnderecoRequestDTO("22220001", "52", "902")
+                new DadosEnderecoDTO("22220001", "52", "902")
         );
 
         // When + Then
@@ -166,7 +166,7 @@ public class RestauranteControllerTest {
                 "The best coffee",
                 "999999999",
                 "11222333000181",
-                new DadosEnderecoRequestDTO("", "23", "801")
+                new DadosEnderecoDTO("", "23", "801")
         );
 
         // When + Then
@@ -331,7 +331,7 @@ public class RestauranteControllerTest {
     }
 
     private DadosRestauranteDTO criaDTOCadastro(String numero, String complemento) {
-        DadosEnderecoRequestDTO enderecoRequestDTO = new DadosEnderecoRequestDTO(
+        DadosEnderecoDTO enderecoRequestDTO = new DadosEnderecoDTO(
                 "22220001",
                 numero,
                 complemento

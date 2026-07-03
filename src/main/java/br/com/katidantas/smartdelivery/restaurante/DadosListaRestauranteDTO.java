@@ -1,18 +1,18 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoResponseDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosDetalhamentoEnderecoDTO;
 
 public record DadosListaRestauranteDTO(
         Long id,
         String nome,
         String telefone,
-        DadosEnderecoResponseDTO endereco
+        DadosDetalhamentoEnderecoDTO endereco
 ) {
     public DadosListaRestauranteDTO(Restaurante restaurante) {
         this(
                 restaurante.getId(),
                 restaurante.getNome(),
                 restaurante.getTelefone(),
-                DadosEnderecoResponseDTO.fromEntity(restaurante.getEndereco()));
+                DadosDetalhamentoEnderecoDTO.fromEntity(restaurante.getEndereco()));
     }
 }

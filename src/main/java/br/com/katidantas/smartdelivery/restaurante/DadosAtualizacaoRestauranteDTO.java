@@ -1,6 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import jakarta.validation.Valid;
 
 public record DadosAtualizacaoRestauranteDTO(
@@ -8,7 +8,7 @@ public record DadosAtualizacaoRestauranteDTO(
         String nome,
         String telefone,
         @Valid
-        DadosEnderecoRequestDTO endereco) {
+        DadosEnderecoDTO endereco) {
 
 
     public Restaurante toEntity() {

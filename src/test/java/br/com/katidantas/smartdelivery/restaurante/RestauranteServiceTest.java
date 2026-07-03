@@ -1,7 +1,7 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
 import br.com.katidantas.smartdelivery.endereco.CepService;
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
@@ -41,7 +41,7 @@ public class RestauranteServiceTest {
     @DisplayName("Deve salvar e retornar o restaurante quando todos os dados estiverem corretos")
     void deveSalvarRestaurante_QuandoTodosOsDadosEstiveremCorretos() {
         //Given
-        DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
+        DadosEnderecoDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
         Restaurante restaurante = new Restaurante();
         restaurante.setId(1L);
@@ -114,7 +114,7 @@ public class RestauranteServiceTest {
     @DisplayName("Deve buscar um restaurante por ID quando o ID for válido")
     void deveBuscarRestaurante_QuandoIdValido() {
         //Given
-        DadosEnderecoRequestDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
+        DadosEnderecoDTO enderecoRequestDTO = criaDadosEnderecoRequestDTOMock();
 
         Restaurante restaurante = new Restaurante();
         restaurante.setId(1L);
@@ -258,8 +258,8 @@ public class RestauranteServiceTest {
         verify(repository).save(restaurante);
     }
 
-    private DadosEnderecoRequestDTO criaDadosEnderecoRequestDTOMock() {
-        return new DadosEnderecoRequestDTO(
+    private DadosEnderecoDTO criaDadosEnderecoRequestDTOMock() {
+        return new DadosEnderecoDTO(
                 "22220001",
                 "123",
                 "500"

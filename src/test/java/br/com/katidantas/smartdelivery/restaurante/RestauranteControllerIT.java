@@ -1,6 +1,6 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoRequestDTO;
+import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -223,7 +223,7 @@ public class RestauranteControllerIT {
     }
 
     private static DadosRestauranteDTO criaRestauranteDTO(String numero, String complemento) {
-        DadosEnderecoRequestDTO endereco = new DadosEnderecoRequestDTO(
+        DadosEnderecoDTO endereco = new DadosEnderecoDTO(
                 "22220001",
                 numero,
                 complemento
