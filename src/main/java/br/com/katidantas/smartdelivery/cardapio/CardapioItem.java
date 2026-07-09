@@ -22,18 +22,24 @@ public class CardapioItem {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private CategoriaItem categoria;
 
+    @Column(nullable = false)
     private String nome;
     private String descricao;
+
+    @Column(nullable = false)
     private BigDecimal preco;
+
+    @Column(nullable = false)
     private Boolean ativo = true;
 
     @Column(name = "foto_url")
     private String fotoUrl;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_id")
+    @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
 
 

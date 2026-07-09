@@ -403,7 +403,6 @@ public class RestauranteControllerTest {
 
     public DadosAtualizacaoRestauranteDTO criaDTOAtualizacao() {
         DadosAtualizacaoRestauranteDTO dtoValido = new DadosAtualizacaoRestauranteDTO(
-                1L,
                 "Café atualizado",
                 "888888888",
                 null

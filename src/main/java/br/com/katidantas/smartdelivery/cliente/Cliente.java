@@ -3,7 +3,6 @@ package br.com.katidantas.smartdelivery.cliente;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
@@ -34,6 +33,8 @@ public class Cliente {
     @NotBlank
     @Column(nullable = false)
     private String telefone;
+
+    private Boolean ativo = true;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_endereco")

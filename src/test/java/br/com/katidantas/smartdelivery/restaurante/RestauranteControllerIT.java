@@ -155,7 +155,6 @@ public class RestauranteControllerIT {
         Long id = restaurante.getId();
 
         DadosAtualizacaoRestauranteDTO dadosRestaurante = new DadosAtualizacaoRestauranteDTO(
-                id,
                 "Novo nome",
                 "0000000000",
                 null
@@ -171,7 +170,6 @@ public class RestauranteControllerIT {
         //Then
         assertThat(restauranteAtualizado.getStatusCode().value()).isEqualTo(200);
 
-        assertThat(dadosRestaurante.id()).isEqualTo(restauranteAtualizado.getBody().id());
         assertThat(dadosRestaurante.nome()).isEqualTo(restauranteAtualizado.getBody().nome());
 
     }

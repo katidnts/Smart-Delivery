@@ -4,7 +4,6 @@ import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import jakarta.validation.Valid;
 
 public record DadosAtualizacaoRestauranteDTO(
-        Long id,
         String nome,
         String telefone,
         @Valid
