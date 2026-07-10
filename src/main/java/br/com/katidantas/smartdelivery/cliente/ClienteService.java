@@ -1,14 +1,29 @@
 package br.com.katidantas.smartdelivery.cliente;
 
+import br.com.katidantas.smartdelivery.endereco.CepService;
+import br.com.katidantas.smartdelivery.endereco.Endereco;
+import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
+import br.com.katidantas.smartdelivery.endereco.EnderecoService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 public class ClienteService {
 
+    private final ClienteRepository repository;
+
+    private final EnderecoService enderecoService;
+
     public Cliente save(Cliente cliente) {
-        return cliente;
+
+        Endereco endereco = enderecoService.montaEnderecoCompleto(cliente.getEndereco());
+
+        cliente.setEndereco(endereco);
+
+        return repository.save(cliente);
     }
 
     public Cliente buscarCliente(Long id) {

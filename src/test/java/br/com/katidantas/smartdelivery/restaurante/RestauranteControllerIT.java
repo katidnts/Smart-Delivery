@@ -4,6 +4,7 @@ import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +43,8 @@ public class RestauranteControllerIT {
     }
 
     @Test
-    void deveBuscarRestaurantePorId() {
+    @DisplayName("Deve buscar restaurante quando id válido")
+    void deveBuscarRestaurante_QuandoIdValido() {
         //Given
         Restaurante restaurante = criaRestaurante();
 
@@ -74,7 +76,8 @@ public class RestauranteControllerIT {
     }
 
     @Test
-    void deveCriarRestaurante() {
+    @DisplayName("Deve criar restaurante quando dados válidos")
+    void deveCriarRestaurante_QuandoDadosValidos() {
         //Given
         DadosRestauranteDTO restaurante = criaRestauranteDTO();
 
@@ -100,6 +103,7 @@ public class RestauranteControllerIT {
     }
 
     @Test
+    @DisplayName("Deve criar um restaurante sem numero e complemento no endereço")
     void deveCriarUmRestauranteSemNumeroEComplemento() {
         //Given
         DadosRestauranteDTO restaurante = criaRestauranteDTO(null, null);
@@ -126,6 +130,7 @@ public class RestauranteControllerIT {
     }
 
     @Test
+    @DisplayName("Deve buscar uma lista de restaurantes ativos")
     void deveBuscarUmaListaComRestaurantesAtivos() {
         //Given
         List<Restaurante> restaurantes = criaListaRestaurante();
@@ -148,6 +153,7 @@ public class RestauranteControllerIT {
     }
 
     @Test
+    @DisplayName("Deve atualizar restaurante quando dados válidos")
     void deveAtualizarRestaurante() {
         //Given
         Restaurante restaurante = criaRestaurante();
@@ -175,7 +181,8 @@ public class RestauranteControllerIT {
     }
 
     @Test
-    void deveDeletarRestaurante() {
+    @DisplayName("Deve inativar restaurante quando id válido")
+    void deveInativarRestaurante() {
         //Given
         Restaurante restaurante = criaRestaurante();
         restauranteRepository.save(restaurante);

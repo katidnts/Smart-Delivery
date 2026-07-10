@@ -3,6 +3,7 @@ package br.com.katidantas.smartdelivery.restaurante;
 import br.com.katidantas.smartdelivery.endereco.CepService;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
 import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
+import br.com.katidantas.smartdelivery.endereco.EnderecoService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -16,22 +17,15 @@ public class RestauranteService {
 
     private final RestauranteRepository repository;
 
-    private final CepService cepService;
+    private final EnderecoService enderecoService;
 
 
     @Transactional
     public Restaurante save(Restaurante restaurante) {
-        String cep = restaurante.getEndereco().getCep();
 
-        EnderecoParcialDTO enderecoParcial = cepService.buscarCep(cep);
-        Endereco endereco = restaurante.getEndereco();
+        Endereco enderecoCompleto = enderecoService.montaEnderecoCompleto(restaurante.getEndereco());
 
-        endereco.setLogradouro(enderecoParcial.logradouro());
-        endereco.setBairro(enderecoParcial.bairro());
-        endereco.setCidade(enderecoParcial.localidade());
-        endereco.setUf(enderecoParcial.uf());
-
-        restaurante.setEndereco(endereco);
+        restaurante.setEndereco(enderecoCompleto);
 
         return repository.save(restaurante);
     }

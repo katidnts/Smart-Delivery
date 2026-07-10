@@ -299,7 +299,7 @@ public class CardapioItemControllerTest {
 
     @Test
     @DisplayName("Deve deletar item quando id ativo")
-    void deveDeletarItem_QuandoIdAtivo() throws Exception {
+    void deveInativarItem_QuandoIdAtivo() throws Exception {
         //Given
         Long restauranteId = 5L;
         Long cardapioItemId = 1L;

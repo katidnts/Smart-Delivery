@@ -1,10 +1,7 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.CepService;
-import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
+import br.com.katidantas.smartdelivery.endereco.*;
 
-import br.com.katidantas.smartdelivery.endereco.Endereco;
-import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +29,7 @@ public class RestauranteServiceTest {
     private RestauranteRepository repository;
 
     @Mock
-    private CepService cepService;
+    private EnderecoService enderecoService;
 
     @InjectMocks
     private RestauranteService restauranteService;
@@ -48,7 +45,8 @@ public class RestauranteServiceTest {
         restaurante.setNome("Casa do drink");
         restaurante.setCnpj("11999999999");
         restaurante.setTelefone("999999999");
-        restaurante.setEndereco(enderecoRequestDTO.toEntity());
+        Endereco endereco = enderecoRequestDTO.toEntity();
+        restaurante.setEndereco(endereco);
         restaurante.setCardapio(null);
         restaurante.setAtivo(true);
         EnderecoParcialDTO enderecoParcialDTO = new EnderecoParcialDTO(
@@ -59,7 +57,7 @@ public class RestauranteServiceTest {
                 "RJ"
         );
 
-        when(cepService.buscarCep("22220001")).thenReturn(enderecoParcialDTO);
+        when(enderecoService.montaEnderecoCompleto(endereco)).thenReturn(enderecoParcialDTO.toEntity());
         when(repository.save(any())).thenReturn(restaurante);
 
         //When
@@ -79,16 +77,16 @@ public class RestauranteServiceTest {
     void deveLancarIllegalArgumentException_QuandoCepNuloOuFormatoInvalido() {
         //Given
         Restaurante restaurante = criaRestauranteMock();
-        restaurante.getEndereco().setCep("2222000");
+        Endereco endereco = restaurante.getEndereco();
 
-        when(cepService.buscarCep("2222000")).thenThrow(new IllegalArgumentException("O CEP deve conter 8 dígitos"));
+        when(enderecoService.montaEnderecoCompleto(endereco)).thenThrow(new IllegalArgumentException("O CEP deve conter 8 dígitos"));
 
         //When + Then
         assertThatThrownBy(() -> restauranteService.save(restaurante))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("O CEP deve conter 8 dígitos");
 
-        verify(cepService).buscarCep("2222000");
+        verify(enderecoService).montaEnderecoCompleto(endereco);
     }
 
     @Test
@@ -97,17 +95,16 @@ public class RestauranteServiceTest {
         //Given
 
         Restaurante restaurante = criaRestauranteMock();
-        restaurante.getEndereco().setCep("99999999");
+        Endereco endereco = restaurante.getEndereco();
 
-        when(cepService.buscarCep("99999999")).thenThrow(new IllegalArgumentException("CEP inválido!"));
+        when(enderecoService.montaEnderecoCompleto(endereco)).thenThrow(new IllegalArgumentException("CEP inválido!"));
 
         //When + Then
-
         assertThatThrownBy(() -> restauranteService.save(restaurante))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("CEP inválido!");
 
-        verify(cepService).buscarCep("99999999");
+        verify(enderecoService).montaEnderecoCompleto(endereco);
     }
 
     @Test

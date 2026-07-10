@@ -252,6 +252,7 @@ public class RestauranteControllerTest {
     }
 
     @Test
+    @DisplayName("Deve atualizar restaurante quando dados válidos")
     void deveAtualizarRestaurante() throws Exception {
         // Given
         Restaurante restauranteMock = criaRestauranteMock();
@@ -282,7 +283,8 @@ public class RestauranteControllerTest {
     }
 
     @Test
-    void deveDeletarRestauranteQuandoIdValido() throws Exception {
+    @DisplayName("Deve inativar restaurante quando id válido")
+    void deveInativarRestauranteQuandoIdValido() throws Exception {
         // Given
         Restaurante restauranteMock = criaRestauranteMock();
         Long id = restauranteMock.getId();

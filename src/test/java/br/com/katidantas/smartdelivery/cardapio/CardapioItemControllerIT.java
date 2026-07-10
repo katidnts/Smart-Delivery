@@ -6,6 +6,7 @@ import br.com.katidantas.smartdelivery.restaurante.Restaurante;
 import br.com.katidantas.smartdelivery.restaurante.RestauranteRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +52,8 @@ public class CardapioItemControllerIT {
     }
 
     @Test
-    void deveCriarCardapio() {
+    @DisplayName("Deve criar item do cardápio quando dados válidos")
+    void deveCriarCardapio_QuandoDadosValidos() {
         //Given
         DadosCardapioItemDTO itemCardapio = criaCardapioDTO();
 
@@ -78,7 +80,8 @@ public class CardapioItemControllerIT {
     }
 
     @Test
-    void deveBuscarCardapioItemPorId() {
+    @DisplayName("Deve buscar item do cardápio quando id válido")
+    void deveBuscarCardapioItem_QuandoIdValido() {
         //Given
         CardapioItem cardapioItem = criaCardapioItemMock();
         cardapioItem.setRestaurante(restaurante);
@@ -106,7 +109,8 @@ public class CardapioItemControllerIT {
     }
 
     @Test
-    void deveBuscarListaDeItensAtivos() {
+    @DisplayName("Deve buscar lista de itens ativos")
+    void deveBuscarListaDeItens_QuandoAtivos() {
         //Given
         List<CardapioItem> itens = criaListaDeItensMock();
         itens.forEach(item -> item.setRestaurante(restaurante));
@@ -132,6 +136,7 @@ public class CardapioItemControllerIT {
     }
 
     @Test
+    @DisplayName("Deve atualizar item do cardápio quando dados válidos")
     void deveAtualizarCardapioItem() {
         //Given
         CardapioItem cardapioItem = criaCardapioItemMock();
@@ -164,7 +169,8 @@ public class CardapioItemControllerIT {
     }
 
     @Test
-    void deveInativarItemDoCardapio() {
+    @DisplayName("Deve inativar item do cardápio quando id Vávido")
+    void deveInativarItemDoCardapio_QuandoIdValido() {
         //Given
         CardapioItem cardapioItem = criaCardapioItemMock();
         cardapioItem.setRestaurante(restaurante);
