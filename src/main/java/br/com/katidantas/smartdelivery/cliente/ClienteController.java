@@ -42,7 +42,7 @@ public class ClienteController {
 
     @GetMapping
     public ResponseEntity<Page<DadosListaClienteDTO>> buscarTodosClientesAtivos(@PageableDefault(size = 20, sort = {"nome"}) Pageable paginacao) {
-        Page<DadosListaClienteDTO> page = service.listarClientes(paginacao);
+        Page<DadosListaClienteDTO> page = service.listarClientes(paginacao).map(DadosListaClienteDTO::new);
         return ResponseEntity.ok(page);
     }
 

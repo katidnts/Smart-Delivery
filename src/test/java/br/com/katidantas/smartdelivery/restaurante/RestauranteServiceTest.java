@@ -239,20 +239,15 @@ public class RestauranteServiceTest {
         Restaurante restaurante = criaRestauranteMock();
 
         when(repository.findByIdAndAtivoEquals(1L, true)).thenReturn(Optional.of(restaurante));
-        when(repository.save(restaurante)).thenReturn(restaurante);
 
         //When
-        var resultado = restauranteService.inativar(1L);
+        restauranteService.inativar(1L);
 
         //Then
-        assertThat(resultado.getNome()).isEqualTo(restaurante.getNome());
-        assertThat(resultado.getCnpj()).isEqualTo(restaurante.getCnpj());
-        assertThat(resultado.getTelefone()).isEqualTo(restaurante.getTelefone());
-        assertThat(resultado.getAtivo()).isFalse();
-        assertThat(resultado.getEndereco()).isEqualTo(restaurante.getEndereco());
+        assertThat(restaurante.getAtivo()).isFalse();
 
         verify(repository).findByIdAndAtivoEquals(1L, true);
-        verify(repository).save(restaurante);
+
     }
 
     private DadosEnderecoDTO criaDadosEnderecoRequestDTOMock() {

@@ -289,8 +289,6 @@ public class RestauranteControllerTest {
         Restaurante restauranteMock = criaRestauranteMock();
         Long id = restauranteMock.getId();
 
-        when(restauranteService.inativar(id)).thenReturn(restauranteMock);
-
         // When
         mockMvc.perform(delete("/restaurantes/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)

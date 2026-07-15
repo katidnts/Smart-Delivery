@@ -1,15 +1,15 @@
 package br.com.katidantas.smartdelivery.restaurante;
 
-import br.com.katidantas.smartdelivery.endereco.CepService;
 import br.com.katidantas.smartdelivery.endereco.Endereco;
-import br.com.katidantas.smartdelivery.endereco.EnderecoParcialDTO;
 import br.com.katidantas.smartdelivery.endereco.EnderecoService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @AllArgsConstructor
 @Service
@@ -30,11 +30,9 @@ public class RestauranteService {
         return repository.save(restaurante);
     }
 
-    @Transactional
     public Restaurante buscarRestaurantePorId(Long id) {
 
-        Restaurante restaurante = getRestauranteAtivo(id);
-        return restaurante;
+        return getRestauranteAtivo(id);
     }
 
     public Page<Restaurante> listarRestaurantes(Pageable paginacao) {
@@ -60,12 +58,10 @@ public class RestauranteService {
     }
 
     @Transactional
-    public Restaurante inativar(Long id) {
+    public void inativar(Long id) {
 
         Restaurante restaurante = getRestauranteAtivo(id);
         restaurante.setAtivo(false);
-
-        return repository.save(restaurante);
     }
 
     // TODO: diferenciar mensagem de erro para id não encontrado e restaurante inativo
