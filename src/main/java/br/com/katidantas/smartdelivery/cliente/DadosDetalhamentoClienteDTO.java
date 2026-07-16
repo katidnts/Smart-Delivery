@@ -9,6 +9,7 @@ DadosDetalhamentoClienteDTO(
         String sobrenome,
         String cpf,
         String telefone,
+        String email,
         DadosDetalhamentoEnderecoDTO endereco
 ) {
     public DadosDetalhamentoClienteDTO(Cliente cliente) {
@@ -18,6 +19,7 @@ DadosDetalhamentoClienteDTO(
                 cliente.getSobrenome(),
                 cliente.getCpf(),
                 cliente.getTelefone(),
+                cliente.getEmail(),
                 DadosDetalhamentoEnderecoDTO.fromEntity(cliente.getEndereco())
         );
     }

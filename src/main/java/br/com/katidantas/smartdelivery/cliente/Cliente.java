@@ -1,7 +1,9 @@
 package br.com.katidantas.smartdelivery.cliente;
 
 import br.com.katidantas.smartdelivery.endereco.Endereco;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +33,15 @@ public class Cliente {
     private String cpf;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String telefone;
 
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
     private Boolean ativo = true;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

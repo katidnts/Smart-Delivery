@@ -56,6 +56,9 @@ public class ClienteService {
         if (clienteAtualizado.getTelefone() != null) {
             cliente.setTelefone(clienteAtualizado.getTelefone());
         }
+        if (clienteAtualizado.getEmail() != null) {
+            cliente.setEmail(clienteAtualizado.getEmail());
+        }
         if (clienteAtualizado.getEndereco() != null) {
             cliente.setEndereco(clienteAtualizado.getEndereco());
         }

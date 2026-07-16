@@ -6,6 +6,7 @@ public record DadosListaClienteDTO(
         Long id,
         String nome,
         String telefone,
+        String email,
         DadosDetalhamentoEnderecoDTO endereco
 ) {
     public DadosListaClienteDTO(Cliente cliente) {
@@ -13,6 +14,7 @@ public record DadosListaClienteDTO(
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefone(),
+                cliente.getEmail(),
                 DadosDetalhamentoEnderecoDTO.fromEntity(cliente.getEndereco()));
 
     }
