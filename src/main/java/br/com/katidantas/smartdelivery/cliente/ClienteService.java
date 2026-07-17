@@ -60,9 +60,9 @@ public class ClienteService {
             cliente.setEmail(clienteAtualizado.getEmail());
         }
         if (clienteAtualizado.getEndereco() != null) {
-            cliente.setEndereco(clienteAtualizado.getEndereco());
+            Endereco endereco = enderecoService.montaEnderecoCompleto(clienteAtualizado.getEndereco());
+            cliente.setEndereco(endereco);
         }
-
         return cliente;
     }
 
