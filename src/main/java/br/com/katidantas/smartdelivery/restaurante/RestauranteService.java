@@ -23,6 +23,13 @@ public class RestauranteService {
     @Transactional
     public Restaurante save(Restaurante restaurante) {
 
+        if (repository.existsByCnpj(restaurante.getCnpj())) {
+            throw new ValidacaoRestauranteException("CNPJ já cadastrado!");
+        }
+        if (repository.existsByTelefone(restaurante.getTelefone())) {
+            throw new ValidacaoRestauranteException("Telefone já cadastrado!");
+        }
+
         Endereco enderecoCompleto = enderecoService.montaEnderecoCompleto(restaurante.getEndereco());
 
         restaurante.setEndereco(enderecoCompleto);
@@ -52,7 +59,8 @@ public class RestauranteService {
             restaurante.setTelefone(restauranteAtualizado.getTelefone());
         }
         if (restauranteAtualizado.getEndereco() != null) {
-            restaurante.setEndereco(restauranteAtualizado.getEndereco());
+            Endereco enderecoCompleto = enderecoService.montaEnderecoCompleto(restauranteAtualizado.getEndereco());
+            restaurante.setEndereco(enderecoCompleto);
         }
         return restaurante;
     }

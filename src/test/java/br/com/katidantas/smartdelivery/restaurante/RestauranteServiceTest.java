@@ -108,6 +108,40 @@ public class RestauranteServiceTest {
     }
 
     @Test
+    @DisplayName("Deve lançar ValidacaoRestauranteException quando CNPJ já cadastrado")
+    void deveLancarValidacaoRestauranteException_QuandoCnpjJaCadastrado() {
+        //Given
+        Restaurante restaurante = criaRestauranteMock();
+
+        when(repository.existsByCnpj(restaurante.getCnpj())).thenReturn(true);
+
+        //When + Then
+        assertThatThrownBy(() -> restauranteService.save(restaurante))
+                .isInstanceOf(ValidacaoRestauranteException.class)
+                .hasMessage("CNPJ já cadastrado!");
+
+        verify(repository).existsByCnpj(restaurante.getCnpj());
+    }
+
+    @Test
+    @DisplayName("Deve lançar ValidacaoRestauranteException quando telefone já cadastrado")
+    void deveLancarValidacaoRestauranteException_QuandoTelefoneJaCadastrado() {
+        //Given
+        Restaurante restaurante = criaRestauranteMock();
+
+        when(repository.existsByCnpj(restaurante.getCnpj())).thenReturn(false);
+        when(repository.existsByTelefone(restaurante.getTelefone())).thenReturn(true);
+
+        //When + Then
+        assertThatThrownBy(() -> restauranteService.save(restaurante))
+                .isInstanceOf(ValidacaoRestauranteException.class)
+                .hasMessage("Telefone já cadastrado!");
+
+        verify(repository).existsByCnpj(restaurante.getCnpj());
+        verify(repository).existsByTelefone(restaurante.getTelefone());
+    }
+
+    @Test
     @DisplayName("Deve buscar um restaurante por ID quando o ID for válido")
     void deveBuscarRestaurante_QuandoIdValido() {
         //Given

@@ -21,7 +21,6 @@ public record DadosRestauranteDTO(
 ) {
     public Restaurante toEntity() {
         Restaurante restaurante = new Restaurante();
-        restaurante.setAtivo(true);
         restaurante.setNome(this.nome);
 
         String cnpjLimpo = this.cnpj.replaceAll("\\D", "");

@@ -12,4 +12,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
 
     Optional<Restaurante> findByIdAndAtivoEquals(Long id, Boolean estado);
 
+    boolean existsByCnpj(String cnpj);
+
+    boolean existsByTelefone(String telefone);
 }

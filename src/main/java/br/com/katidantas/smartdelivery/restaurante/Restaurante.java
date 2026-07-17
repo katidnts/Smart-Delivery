@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 
 import java.util.List;
 
-@Entity(name = "restaurante")
+@Entity
 @Table(name = "restaurantes")
 @Setter
 @Getter
@@ -24,21 +24,25 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @NotBlank
+    @Column(nullable = false, unique = true)
     private String telefone;
 
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    @CNPJ
     private String cnpj;
 
-    @OneToOne(cascade = CascadeType.ALL)
+
+    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
-    private Boolean ativo;
-
-    public Boolean isAtivo() {
-        return ativo;
-    }
+    @Column(nullable = false)
+    private Boolean ativo = true;
 
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CardapioItem> cardapio;

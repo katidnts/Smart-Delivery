@@ -95,6 +95,44 @@ public class RestauranteControllerTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 quando o CNPJ já estiver cadastrado")
+    void deveLancarErro_QuandoCadastrarRestauranteComCnpjJaCadastrado() throws Exception {
+        // Given
+        DadosRestauranteDTO dtoValido = criaDTOCadastro();
+
+        when(restauranteService.save(any()))
+                .thenThrow(new ValidacaoRestauranteException("CNPJ já cadastrado!"));
+
+        // When + Then
+        mockMvc.perform(post("/restaurantes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoValido))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(restauranteService).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando o telefone já estiver cadastrado")
+    void deveLancarErro_QuandoCadastrarRestauranteComTelefoneJaCadastrado() throws Exception {
+        // Given
+        DadosRestauranteDTO dtoValido = criaDTOCadastro();
+
+        when(restauranteService.save(any()))
+                .thenThrow(new ValidacaoRestauranteException("Telefone já cadastrado!"));
+
+        // When + Then
+        mockMvc.perform(post("/restaurantes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dtoValido))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(restauranteService).save(any());
+    }
+
+    @Test
     @DisplayName("Deve retornar 400 quando o CNPJ for inválido")
     void deveLancarErro_QuandoCadastrarRestauranteComCnpjInvalido() throws Exception {
         // Given
