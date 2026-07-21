@@ -1,4 +1,4 @@
-# 🍽️ SmartDelivery - Módulo de Restaurantes
+# 🍽️ SmartDelivery
 
 O **SmartDelivery** é uma aplicação backend voltada para o gerenciamento de restaurantes em um sistema de delivery.
 
