@@ -12,17 +12,33 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class RestauranteControllerIT {
+
+    @Container
+    static PostgreSQLContainer<?> postgres =new PostgreSQLContainer<>("postgres:17");
+
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -100,6 +116,12 @@ public class RestauranteControllerIT {
         assertThat(dadosDetalhamentoRestauranteDTO.endereco().cep()).isEqualTo(restaurante.endereco().cep());
         assertThat(dadosDetalhamentoRestauranteDTO.endereco().numero()).isEqualTo(restaurante.endereco().numero());
         assertThat(dadosDetalhamentoRestauranteDTO.endereco().complemento()).isEqualTo(restaurante.endereco().complemento());
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro 400 quando CNPJ duplicado")
+    void deveLancarErro400_QuandoCnpjDuplicado() {
+
     }
 
     @Test
@@ -247,7 +269,7 @@ public class RestauranteControllerIT {
         var restaurante1 = new Restaurante();
         restaurante1.setAtivo(true);
         restaurante1.setNome("Casa da feijoada");
-        restaurante1.setCnpj("34665790000109");
+        restaurante1.setCnpj("11222333000181");
         restaurante1.setTelefone("888888888");
         restaurante1.setEndereco(new Endereco(
                 null,
@@ -263,7 +285,7 @@ public class RestauranteControllerIT {
         var restaurante2 = new Restaurante();
         restaurante2.setAtivo(true);
         restaurante2.setNome("Casa do Sushi");
-        restaurante2.setCnpj("07526557000100");
+        restaurante2.setCnpj("22333444000181");
         restaurante2.setTelefone("222222222");
         restaurante2.setEndereco(new Endereco(
                 null,
