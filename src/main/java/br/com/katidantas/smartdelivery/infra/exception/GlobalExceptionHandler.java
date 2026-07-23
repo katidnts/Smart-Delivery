@@ -1,5 +1,6 @@
 package br.com.katidantas.smartdelivery.infra.exception;
 
+import br.com.katidantas.smartdelivery.cliente.ValidacaoClienteException;
 import br.com.katidantas.smartdelivery.endereco.CepInvalidoException;
 import br.com.katidantas.smartdelivery.restaurante.ValidacaoRestauranteException;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,5 +26,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-
+    @ExceptionHandler(ValidacaoClienteException.class)
+    public ResponseEntity<String> handleCpfDuplicado(ValidacaoClienteException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

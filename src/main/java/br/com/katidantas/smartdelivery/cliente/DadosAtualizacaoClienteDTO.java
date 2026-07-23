@@ -2,10 +2,12 @@ package br.com.katidantas.smartdelivery.cliente;
 
 import br.com.katidantas.smartdelivery.endereco.DadosEnderecoDTO;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 
 public record DadosAtualizacaoClienteDTO(
         String nome,
         String sobrenome,
+        @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos numéricos")
         String telefone,
         @Email
         String email,

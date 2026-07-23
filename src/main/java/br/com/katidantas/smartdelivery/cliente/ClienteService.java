@@ -23,7 +23,13 @@ public class ClienteService {
     public Cliente save(Cliente cliente) {
 
         if (repository.existsByCpf(cliente.getCpf())) {
-            throw new IllegalArgumentException("CPF já cadastrado!");
+            throw new ValidacaoClienteException("CPF já cadastrado!");
+        }
+        if (repository.existsByTelefone(cliente.getTelefone())) {
+            throw new ValidacaoClienteException("Telefone já cadastrado!");
+        }
+        if (repository.existsByEmail(cliente.getEmail())) {
+            throw new ValidacaoClienteException("Email já cadastrado!");
         }
 
         Endereco endereco = enderecoService.montaEnderecoCompleto(cliente.getEndereco());
@@ -33,14 +39,11 @@ public class ClienteService {
     }
 
     public Cliente buscarCliente(Long id) {
-
         return getClienteAtivo(id);
-
     }
 
     public Page<Cliente> listarClientes(Pageable paginacao) {
         return repository.findAllByAtivoTrue(paginacao);
-
     }
 
     @Transactional
@@ -54,9 +57,15 @@ public class ClienteService {
             cliente.setSobrenome(clienteAtualizado.getSobrenome());
         }
         if (clienteAtualizado.getTelefone() != null) {
+            if (repository.existsByTelefoneAndIdNot(clienteAtualizado.getTelefone(), id)) {
+                throw new ValidacaoClienteException("Telefone já cadastrado!");
+            }
             cliente.setTelefone(clienteAtualizado.getTelefone());
         }
         if (clienteAtualizado.getEmail() != null) {
+            if (repository.existsByEmailAndIdNot(clienteAtualizado.getEmail(), id)) {
+                throw new ValidacaoClienteException("Email já cadastrado!");
+            }
             cliente.setEmail(clienteAtualizado.getEmail());
         }
         if (clienteAtualizado.getEndereco() != null) {
