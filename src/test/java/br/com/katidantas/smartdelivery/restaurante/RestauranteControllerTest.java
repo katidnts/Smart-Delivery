@@ -146,7 +146,7 @@ public class RestauranteControllerTest {
                         "902")
         );
 
-        // When / Then
+        // When + Then
         mockMvc.perform(post("/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoInvalido))
