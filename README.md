@@ -55,9 +55,11 @@ Link para a coleção do Postman com exemplos de requisições para todos os end
 
 ## 🔧 Tecnologias Utilizadas
 
-* Java
-* Spring Boot
+* Java 21
+* Spring Boot 3
 * Spring Data JPA
+* Hibernate
+* PostgreSQL
 * Flyway
 * Maven
 
@@ -67,7 +69,7 @@ Link para a coleção do Postman com exemplos de requisições para todos os end
 
 O projeto conta com testes automatizados cobrindo as camadas de **Controller** e **Service**, com cobertura atual **> 85% das classes e > 90% das linhas**.
 
-Os testes utilizam **JUnit 5**, **Mockito**, **AssertJ** e **MockMvc**, validando tanto a lógica de negócio isolada quanto os endpoints da API.
+Os testes utilizam **JUnit 5**, **Mockito**, **AssertJ**, **MockMvc** e **Testcontainers**, validando tanto a lógica de negócio isolada quanto os endpoints da API com um banco PostgreSQL real.
 
 ---
 
